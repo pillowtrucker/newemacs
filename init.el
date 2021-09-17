@@ -33,9 +33,11 @@
 
 ;;; Code:
 
-;; This is for testing. Do not uncomment.
-(setq user-init-file (or load-file-name (buffer-file-name)))
-(setq user-emacs-directory (file-name-directory user-init-file))
+;; This is  for testing.  Do not uncomment.  It allows loading  of this  file as
+;; alternative   `init.el'    when   you    have   an   existing    init   file.
+;; To do so: $ emacs -q --load init.el
+;(setq user-init-file (or load-file-name (buffer-file-name)))
+;(setq user-emacs-directory (file-name-directory user-init-file))
 
 ;; Put customisations to a separate file under ~/.emacs.d/custom.el:
 (setq custom-file (expand-file-name "custom.el"

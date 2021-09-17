@@ -1,0 +1,6 @@
+# Unreal Emacs Config
+
+. Install https://gitlab.com/unrealemacs/emacs-sourcecode-access[Emacs Source Code Access] plug-in for Unreal Engine. Make sure you apply UBT patch too.
+. `git clone --recursive git@gitlab.com:unrealemacs/emacsconfig.git ~/.emacs.d`
+. Read comments in the `init.el`. Adopt it as needed.
+. Read https://gitlab.com/unrealemacs/ue.el[ue.el] package documentation.
