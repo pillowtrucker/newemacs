@@ -1,2 +1,13 @@
 *.elc
 .DS_Store
+.lsp-session*
+elpa
+projectile-bookmarks.eld
+recentf
+transient
+places
+smex-items
+ido.last
+*~
+.cache
+custom.el
