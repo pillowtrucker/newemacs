@@ -42,19 +42,27 @@
   (error "This Emacs version is unsupported, please upgrade to at least Emacs %s"
 	 om-min-emacs-version))
 
+(defun om-config-executable-find (command)
+  "Search for COMMAND and return the absolute file name.
+
+Return  COMMAND if  COMMAND is  not found  anywhere in  the value
+returned by the function `exec-path'."
+  (or (executable-find command)
+      command))
+
 ;;; Configuration variables
 
 (defconst om-clang-location
   (pcase system-type
-    ('darwin     (executable-find "clang"))
-    ('gnu/linux  (executable-find "clang"))
+    ('darwin     (om-config-executable-find "clang"))
+    ('gnu/linux  (om-config-executable-find "clang"))
     ('windows-nt "C:\\Program Files\\LLVM\\bin\\clang++.exe"))
   "The absolute path to the clang executable.")
 
 (defconst om-clang-format-location
     (pcase system-type
-      ('darwin     (executable-find "clang-format"))
-      ('gnu/linux  (executable-find "clang-format"))
+      ('darwin     (om-config-executable-find "clang-format"))
+      ('gnu/linux  (om-config-executable-find "clang-format"))
       ('windows-nt "C:\\Program Files\\LLVM\\bin\\clang-format.exe"))
     "The absolute path to the clang-format executable.")
 
@@ -277,10 +285,10 @@ use one of the alternative solutions instead:
   :hook     ((c-mode   . lsp-deferred)
 	     (c++-mode . lsp-deferred)
 	     (lsp-mode . lsp-enable-which-key-integration))
-  :config   (setq lsp-clients-clangd-args '("--header-insertion=never"
+  :config   (setq lsp-keymap-prefix       om-kbd-keymap-prefix-lsp
+		  lsp-clients-clangd-args '("--header-insertion=never"
 					    "--completion-style=bundled"
-					    "--background-index")
-		  lsp-keymap-prefix       om-kbd-keymap-prefix-lsp)
+					    "--background-index"))
   :commands (lsp lsp-deferred))
 
 ;; https://github.com/emacs-lsp/lsp-ui
@@ -291,12 +299,15 @@ use one of the alternative solutions instead:
 (use-package lsp-treemacs
   :commands (lsp-treemacs-errors-list
 	     lsp-treemacs-symbols)
-  :config   (lsp-treemacs-sync-mode 1))
+  :config   (lsp-treemacs-sync-mode +1))
 
 ;; https://github.com/bbatsov/projectile
 (use-package projectile
   :init   (projectile-mode +1)
-  :config (setq projectile-keymap-prefix om-kbd-keymap-prefix-projectile))
+  :config (define-key
+	    projectile-mode-map
+	    om-kbd-keymap-prefix-projectile
+	    'projectile-command-map))
 
 ;;; C++ config
 
@@ -321,14 +332,13 @@ use one of the alternative solutions instead:
    (local-set-key om-kbd-yasnippet-complete  #'company-yasnippet)))
 
 ;;; ue.el
-
-;; ue.el is not on MELPA yet so we  install it manually as git submodule for the
-;; time being
 ;; https://gitlab.com/unrealemacs/ue.el
-(add-to-list 'load-path (expand-file-name "ue-el" user-emacs-directory))
-(require 'ue)
-(define-key ue-mode-map om-kbd-keymap-prefix-ue 'ue-command-map)
-(ue-global-mode +1)
+(use-package ue
+  :init   (ue-global-mode +1)
+  :config (define-key
+	    ue-mode-map
+	    om-kbd-keymap-prefix-ue
+	    'ue-command-map))
 
 ;;; Misc
 

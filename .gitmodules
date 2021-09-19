@@ -1,3 +1,0 @@
-[submodule "ue-el"]
-	path = ue-el
-	url = git@gitlab.com:unrealemacs/ue.el.git
