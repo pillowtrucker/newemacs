@@ -4,3 +4,4 @@
 . `git clone --recursive git@gitlab.com:unrealemacs/emacsconfig.git ~/.emacs.d`
 . Read comments in the `init.el`. Adopt it as needed.
 . Read https://gitlab.com/unrealemacs/ue.el[ue.el] package documentation.
+. Run Emacs. It will take some time to download, install, and configure packages for the first time.
