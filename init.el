@@ -29,69 +29,126 @@
 
 ;;; Commentary:
 
-;;
-
 ;;; Code:
 
 ;; This is  for testing.  Do not uncomment.  It allows loading  of this  file as
 ;; alternative   `init.el'    when   you    have   an   existing    init   file.
 ;; To do so: $ emacs -q --load init.el
-;(setq user-init-file (or load-file-name (buffer-file-name)))
-;(setq user-emacs-directory (file-name-directory user-init-file))
+(setq user-init-file (or load-file-name (buffer-file-name)))
+(setq user-emacs-directory (file-name-directory user-init-file))
 
-;; Put customisations to a separate file under ~/.emacs.d/custom.el:
-(setq custom-file (expand-file-name "custom.el"
-				    user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file))
+(defconst om-min-emacs-version "26.1")
+(when (version< emacs-version om-min-emacs-version)
+  (error "This Emacs version is unsupported, please upgrade to at least Emacs %s"
+	 om-min-emacs-version))
 
-;;; Performance
+;;; Configuration variables
 
-(setq
- ;; Always load newest byte code.
- load-prefer-newer t
- ;; Reduce the frequency of garbage collection  by making it happen on each 50MB
- ;; of allocated data.
- gc-cons-threshold 50000000
- ;; Warn when opening files bigger than 100MB.
- large-file-warning-threshold 100000000
- ;; Disable startup message.
- inhibit-startup-message t
- ;; Turn off alarm bell.
- ring-bell-function 'ignore
- ;; Do not auto save files.
- auto-save-default nil
- auto-save-list-file-prefix nil
- ;; No need for `~' files when editing.
- create-lockfiles nil
- ;; If Emacs  is slow to exit  after enabling `saveplace', set  this variable to
- ;; nil. See `Built-in global modes' section where it is enabled by default.
- save-place-forget-unreadable-files nil
- ;; Show trailing whitespaces.
- show-trailing-whitespace t
- ;; Emacs can  automatically create backup  files. This  tells Emacs to  put all
- ;; backup files to ~/.emacs.d/.backups.
- ;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html
- backup-directory-alist   `(("." . ,(expand-file-name ".backups"
-						      user-emacs-directory))))
+(defconst om-clang-location
+  (pcase system-type
+    ('darwin     (executable-find "clang"))
+    ('gnu/linux  (executable-find "clang"))
+    ('windows-nt "C:\\Program Files\\LLVM\\bin\\clang++.exe"))
+  "The absolute path to the clang executable.")
 
-;; https://www.masteringemacs.org/article/introduction-to-ido-mode
-(setq
- ;; Enable flexible string matching. Flexible matching means that if the entered
- ;; string does not  match any item, any item containing  the entered characters
- ;; in the given sequence will match.
- ido-enable-flex-matching               t
- ido-use-filename-at-point              nil
- ido-use-virtual-buffers                t
- ido-auto-merge-work-directories-length -1)
+(defconst om-clang-format-location
+    (pcase system-type
+      ('darwin     (executable-find "clang-format"))
+      ('gnu/linux  (executable-find "clang-format"))
+      ('windows-nt "C:\\Program Files\\LLVM\\bin\\clang-format.exe"))
+    "The absolute path to the clang-format executable.")
 
-;; https://www.emacswiki.org/emacs/RecentFiles
-(setq recentf-max-menu-items 10)
+(defconst om-activate-c++-mode-for-h-files t
+  "Whether Emacs should treat `*.h' files as C++ headers.
+Emacs  associates  `*.h' files  with  C  headers by  default  and
+activates `c-mode' for them.  This  is an issue for Unreal Engine
+based  projects  because Epic  Games  uses  `*.h' for  C++  code.
+Setting this variable to a logical true changes the default Emacs
+behavior.
 
-;;; Built-in global modes
+If you work with C projects in Emacs, set this setting to nil and
+use one of the alternative solutions instead:
+
+  - Create `.dir-locals.el'  file in  the project  root directory
+    with the following contents:
+        ((c-mode . ((mode . c++))))
+  - Put the following line at the top of the each `*.h' file:
+        // -*-c++-*-.")
+
+(defconst om-distraction-free-ui t
+  "Whether Emacs should hide toolbar, menubar, and friends.")
+
+;;;; Keys
+(defconst om-kbd-clang-format-buffer      (kbd "C-c f"))
+(defconst om-kbd-ibuffer                  (kbd "C-x C-b"))
+(defconst om-kbd-keymap-prefix-lsp        (kbd "C-c l"))
+(defconst om-kbd-keymap-prefix-projectile (kbd "C-c p"))
+(defconst om-kbd-keymap-prefix-ue         (kbd "C-c u"))
+(defconst om-kbd-magit-status             (kbd "C-x g"))
+(defconst om-kbd-search-backward          (kbd "C-M-r"))
+(defconst om-kbd-search-backward-regexp   (kbd "C-r"))
+(defconst om-kbd-search-forward           (kbd "C-M-s"))
+(defconst om-kbd-search-forward-regexp    (kbd "C-s"))
+(defconst om-kbd-smex                     (kbd "M-x"))
+(defconst om-kbd-yasnippet-complete       (kbd "C-c y"))
+
+;;; Standard customizations file
+;; (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+;; (when (file-exists-p custom-file)
+;;   (load custom-file))
+
+;;; Package management
 
 (require 'ido)
+(require 'package)
 (require 'recentf)
+(require 'saveplace)
+
+;;;; Configure straight.el as a package manager
+;; https://github.com/raxod502/straight.el
+(defvar straight-use-package-by-default t)
+(defvar bootstrap-version               nil)
+(let ((bootstrap-file    (expand-file-name
+			  "straight/repos/straight.el/bootstrap.el"
+			  user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; Install https://github.com/jwiegley/use-package
+(straight-use-package 'use-package)
+
+;; Keep ~/.emacs.d clean
+;; https://github.com/emacscollective/no-littering
+(use-package no-littering
+  :config
+  (add-to-list 'recentf-exclude no-littering-var-directory)
+  (add-to-list 'recentf-exclude no-littering-etc-directory)
+  (setq auto-save-file-name-transforms
+	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (setq recentf-max-menu-items 5))
+
+(setq gc-cons-threshold                  50000000
+      large-file-warning-threshold       100000000
+      inhibit-startup-message            t
+      load-prefer-newer                  t
+      show-trailing-whitespace           t
+      ring-bell-function                 'ignore
+      auto-save-default                  nil
+      auto-save-list-file-prefix         nil
+      create-lockfiles                   nil
+      save-place-forget-unreadable-files nil)
+
+(setq ido-use-filename-at-point              nil
+      ido-use-virtual-buffers                t
+      ido-enable-flex-matching               t
+      ido-auto-merge-work-directories-length -1)
 
 ;; Enable blinking cursor.
 (blink-cursor-mode +1)
@@ -111,68 +168,40 @@
 (ido-everywhere +1)
 ;; Recent Files
 (recentf-mode   +1)
-
-;;; Misc goodies
-
 ;; Change all yes/no questions to y/n type so that you don't need to type "yes".
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;;; Global keybindings
 
-;; Interactive search key bindings.  By  default, `C-s' runs isearch-forward, so
-;; this swaps the bindings.
-(global-set-key (kbd "C-s")   'isearch-forward-regexp)
-(global-set-key (kbd "C-r")   'isearch-backward-regexp)
-(global-set-key (kbd "C-M-s") 'isearch-forward)
-(global-set-key (kbd "C-M-r") 'isearch-backward)
-
-;; On a text terminal, the `C-z' command suspends Emacs. Turn this off.
-(global-unset-key (kbd "C-z"))
-
-;; Insert  a newline,  then adjust  indentation of  following line  when hitting
-;; `Enter'.
-(define-key global-map (kbd "RET") 'newline-and-indent)
+(global-set-key om-kbd-search-forward-regexp  #'isearch-forward-regexp)
+(global-set-key om-kbd-search-backward-regexp #'isearch-backward-regexp)
+(global-set-key om-kbd-search-forward         #'isearch-forward)
+(global-set-key om-kbd-search-backward        #'isearch-backward)
+(global-set-key om-kbd-ibuffer                #'ibuffer)
+(global-set-key om-kbd-smex                   #'smex)
+(global-set-key om-kbd-magit-status           #'magit-status)
+(global-set-key (kbd "RET")                   #'newline-and-indent)
 
 ;; Move point from window to window using Shift and the arrow keys.
 ;; https://www.emacswiki.org/emacs/WindMove
 (windmove-default-keybindings)
 
-;; https://www.emacswiki.org/emacs/IbufferMode
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-
-;;; Package management
-
-(require 'package)
-
-;; Add MELPA to the list of package archives.
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-
-;; Initialise package manager.
-(package-initialize)
-
-;; Refresh the list of packages available unless it was done before.
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-;; Make sure `use-package' is installed and enable it.
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-(require 'use-package)
+;; On a text terminal, the `C-z' command suspends Emacs. Turn this off.
+(global-unset-key (kbd "C-z"))
 
 ;;; UI
 
-;; Remove menu, toolbar,  and scrollbar so that we have  less things to distruct
-;; us from the coding.
-(menu-bar-mode   -1)
-(tool-bar-mode   -1)
-(scroll-bar-mode -1)
+(when om-distraction-free-ui
+  (menu-bar-mode   -1)
+  (tool-bar-mode   -1)
+  (scroll-bar-mode -1))
 
 ;;; GUI
 
 (when (display-graphic-p)
   ;; Configure system clipboard interop.
-  (setq x-select-enable-clipboard           t
-	x-select-enable-primary             t
+  (setq select-enable-clipboard             t
+	select-enable-primary               t
 	save-interprogram-paste-before-kill t
 	mouse-yank-at-point                 t))
 
@@ -188,7 +217,6 @@
   ;; Ensure environment  variables inside Emacs look  the same as in  the user's
   ;; shell.
   (use-package exec-path-from-shell
-    :ensure t
     :config
     (setq exec-path-from-shell-arguments nil)
     (exec-path-from-shell-initialize)))
@@ -197,96 +225,83 @@
 
 (when (eq system-type 'windows-nt)
   ;; Add Windows specific stuff here
-  (setq
-   clang-format-executable  "C:\\Program Files\\LLVM\\bin\\clang-format.exe"
-   company-clang-executable "C:\\Program Files\\LLVM\\bin\\clang++.exe"))
+  )
 
 ;;; Convenient packages
 
 ;; https://www.emacswiki.org/emacs/Smex
 (use-package smex
-  :ensure t
-  :config
-  (smex-initialize)
-  (global-set-key (kbd "M-x") 'smex))
+  :config  (smex-initialize))
 
 ;; https://github.com/justbur/emacs-which-key
 (use-package which-key
-  :ensure t
-  :config (which-key-mode))
+  :config (which-key-mode +1))
 
 ;; https://github.com/DarwinAwardWinner/ido-completing-read-plus
 (use-package ido-completing-read+
-  :ensure t
   :config (ido-ubiquitous-mode +1))
 
 ;; https://company-mode.github.io/
 (use-package company
-  :ensure t
-  :config (setq company-tooltip-align-annotations nil
-		;; You have to type at least 3 characters to get autocompletion
-		company-minimum-prefix-length     3)
+  :config (setq company-clang-executable      om-clang-location
+		company-minimum-prefix-length 3)
   :hook   (prog-mode . company-mode))
 
 ;; https://joaotavora.github.io/yasnippet/
 (use-package yasnippet
-  :ensure t
   :config
   (setq yas-indent-line 'fixed)
   (yas-reload-all)
   :hook   (prog-mode . yas-minor-mode))
 
 ;; https://magit.vc/
-(use-package magit
-  :ensure t
-  :config (global-set-key (kbd "C-x g") 'magit-status))
+(use-package magit)
 
 ;; https://github.com/ludwigpacifici/modern-cpp-font-lock
 (use-package modern-cpp-font-lock
-  :ensure t
-  :config (modern-c++-font-lock-global-mode t))
+  :config (modern-c++-font-lock-global-mode +1))
 
 ;; https://clang.llvm.org/docs/ClangFormat.html
 (use-package clang-format
-  :ensure t)
+  :config (setq clang-format-executable om-clang-format-location))
 
 ;; https://github.com/Lindydancer/highlight-doxygen
-(use-package highlight-doxygen
-  :ensure t)
+(use-package highlight-doxygen)
+
+;; https://www.flycheck.org/en/latest/
+(use-package flycheck
+  :init   (global-flycheck-mode +1))
 
 ;; https://emacs-lsp.github.io/lsp-mode/
 (use-package lsp-mode
-  :ensure   t
-  :init     (setq lsp-keymap-prefix "C-c l")
   :hook     ((c-mode   . lsp-deferred)
 	     (c++-mode . lsp-deferred)
 	     (lsp-mode . lsp-enable-which-key-integration))
   :config   (setq lsp-clients-clangd-args '("--header-insertion=never"
 					    "--completion-style=bundled"
-					    "--background-index"))
+					    "--background-index")
+		  lsp-keymap-prefix       om-kbd-keymap-prefix-lsp)
   :commands (lsp lsp-deferred))
 
 ;; https://github.com/emacs-lsp/lsp-ui
 (use-package lsp-ui
-  :ensure   t
   :commands lsp-ui-mode)
 
 ;; https://github.com/emacs-lsp/lsp-treemacs
 (use-package lsp-treemacs
-  :ensure   t
   :commands (lsp-treemacs-errors-list
 	     lsp-treemacs-symbols)
   :config   (lsp-treemacs-sync-mode 1))
 
 ;; https://github.com/bbatsov/projectile
 (use-package projectile
-  :ensure t
-  :bind   (:map projectile-mode-map ("C-c p" . projectile-command-map))
   :init   (projectile-mode +1)
-;;  :config (setq projectile-indexing-method 'hybrid)
-  )
+  :config (setq projectile-keymap-prefix om-kbd-keymap-prefix-projectile))
 
 ;;; C++ config
+
+(when om-activate-c++-mode-for-h-files
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)))
 (add-hook
  'c++-mode-hook
  (lambda ()
@@ -302,18 +317,17 @@
    (display-line-numbers-mode +1)
    ;; Set the right margin according to Epic Games conding standard
    (setq-local fill-column 120)
-   (local-set-key (kbd "C-c f") #'clang-format-region)
-   (local-set-key (kbd "C-c y") #'company-yasnippet)))
+   (local-set-key om-kbd-clang-format-buffer #'clang-format-buffer)
+   (local-set-key om-kbd-yasnippet-complete  #'company-yasnippet)))
 
 ;;; ue.el
 
 ;; ue.el is not on MELPA yet so we  install it manually as git submodule for the
 ;; time being
 ;; https://gitlab.com/unrealemacs/ue.el
-
 (add-to-list 'load-path (expand-file-name "ue-el" user-emacs-directory))
 (require 'ue)
-(define-key ue-mode-map (kbd "C-c u") 'ue-command-map)
+(define-key ue-mode-map om-kbd-keymap-prefix-ue 'ue-command-map)
 (ue-global-mode +1)
 
 ;;; Misc
