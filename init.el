@@ -34,8 +34,8 @@
 ;; This is for testing.  Do not  uncomment.  It allows loading of this
 ;; file as alternative `init.el' when  you have an existing init file.
 ;; To do so: $ emacs -q --load init.el
-(setq user-init-file (or load-file-name (buffer-file-name)))
-(setq user-emacs-directory (file-name-directory user-init-file))
+;;(setq user-init-file (or load-file-name (buffer-file-name)))
+;;(setq user-emacs-directory (file-name-directory user-init-file))
 
 (defconst om-min-emacs-version "26.1")
 (when (version< emacs-version om-min-emacs-version)
