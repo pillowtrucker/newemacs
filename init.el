@@ -70,6 +70,26 @@ returned by the function `exec-path'."
       ('windows-nt "C:\\Program Files\\LLVM\\bin\\clang-format.exe"))
     "The absolute path to the clang-format executable.")
 
+(defconst om-ag-location
+    (pcase system-type
+      ('darwin     (om-config-executable-find "ag"))
+      ('gnu/linux  (om-config-executable-find "ag"))
+      ('windows-nt "C:\\bin\\ag.exe"))
+  "The absolute path to the ag executable.
+
+See https://github.com/ggreer/the_silver_searcher#installing on how
+to install this tool on your system.")
+
+(defconst om-rg-location
+    (pcase system-type
+      ('darwin     (om-config-executable-find "rg"))
+      ('gnu/linux  (om-config-executable-find "rg"))
+      ('windows-nt "C:\\bin\\rg.exe"))
+  "The absolute path to the rg executable.
+
+See https://github.com/BurntSushi/ripgrep#installation on how
+to install this tool on your system.")
+
 (defconst om-activate-c++-mode-for-h-files t
   "Whether Emacs should treat `*.h' files as C++ headers.
 Emacs  associates  `*.h' files  with  C  headers by  default  and
@@ -318,6 +338,14 @@ use one of the alternative solutions instead:
 	    projectile-mode-map
 	    om-kbd-keymap-prefix-projectile
 	    'projectile-command-map))
+
+;; https://github.com/Wilfred/ag.el
+(use-package ag
+  :config (setq ag-executable om-ag-location))
+
+;; https://github.com/dajva/rg.el
+(use-package rg
+  :config (setq rg-executable om-rg-location))
 
 ;;; C++ config
 
