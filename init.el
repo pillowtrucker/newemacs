@@ -31,8 +31,8 @@
 
 ;;; Code:
 
-;; This is  for testing.  Do not uncomment.  It allows loading  of this  file as
-;; alternative   `init.el'    when   you    have   an   existing    init   file.
+;; This is for testing.  Do not  uncomment.  It allows loading of this
+;; file as alternative `init.el' when  you have an existing init file.
 ;; To do so: $ emacs -q --load init.el
 (setq user-init-file (or load-file-name (buffer-file-name)))
 (setq user-emacs-directory (file-name-directory user-init-file))
@@ -41,6 +41,10 @@
 (when (version< emacs-version om-min-emacs-version)
   (error "This Emacs version is unsupported, please upgrade to at least Emacs %s"
 	 om-min-emacs-version))
+
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 (defun om-config-executable-find (command)
   "Search for COMMAND and return the absolute file name.
@@ -86,6 +90,13 @@ use one of the alternative solutions instead:
 (defconst om-distraction-free-ui t
   "Whether Emacs should hide toolbar, menubar, and friends.")
 
+(defconst om-frame-font
+  (pcase system-type
+    ('darwin     "-*-Menlo-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
+    ('gnu/linux  "-PfEd-DejaVu Sans Mono-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+    ('windows-nt "-*-Writer-normal-normal-normal-*-16-*-*-*-p-0-iso10646-1"))
+  "Frame font.")
+
 ;;;; Keys
 (defconst om-kbd-clang-format-buffer      (kbd "C-c f"))
 (defconst om-kbd-ibuffer                  (kbd "C-x C-b"))
@@ -99,11 +110,6 @@ use one of the alternative solutions instead:
 (defconst om-kbd-search-forward-regexp    (kbd "C-s"))
 (defconst om-kbd-smex                     (kbd "M-x"))
 (defconst om-kbd-yasnippet-complete       (kbd "C-c y"))
-
-;;; Standard customizations file
-;; (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-;; (when (file-exists-p custom-file)
-;;   (load custom-file))
 
 ;;; Package management
 
@@ -162,21 +168,23 @@ use one of the alternative solutions instead:
 (blink-cursor-mode +1)
 ;; Show column number in the mode line.
 (column-number-mode +1)
-;; Do not highlight current line. Set this to +1 to enable highlighting.
+;; Do  not  highlight   current  line.  Set  this  to   +1  to  enable
+;; highlighting.
 (global-hl-line-mode -1)
 ;; Highlight matching parenthesis.
 (show-paren-mode +1)
 ;; Display right margin indicator.
 (global-display-fill-column-indicator-mode +1)
-;; When you  visit a file, point  goes to the last  place where it was  when you
-;; previously visited the same file.
+;; When you visit  a file, point goes  to the last place  where it was
+;; when you previously visited the same file.
 (save-place-mode +1)
 ;; Interactively DO things
 (ido-mode       +1)
 (ido-everywhere +1)
 ;; Recent Files
 (recentf-mode   +1)
-;; Change all yes/no questions to y/n type so that you don't need to type "yes".
+;; Change all yes/no  questions to y/n type so that  you don't need to
+;; type "yes".
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;;; Global keybindings
@@ -211,7 +219,9 @@ use one of the alternative solutions instead:
   (setq select-enable-clipboard             t
 	select-enable-primary               t
 	save-interprogram-paste-before-kill t
-	mouse-yank-at-point                 t))
+	mouse-yank-at-point                 t)
+  (when om-frame-font
+    (set-frame-font om-frame-font)))
 
 ;;; GNU/Linux
 
@@ -222,8 +232,8 @@ use one of the alternative solutions instead:
 ;;; macOS
 
 (when (eq system-type 'darwin)
-  ;; Ensure environment  variables inside Emacs look  the same as in  the user's
-  ;; shell.
+  ;; Ensure environment variables inside Emacs look the same as in the
+  ;; user's shell.
   (use-package exec-path-from-shell
     :config
     (setq exec-path-from-shell-arguments nil)
@@ -342,8 +352,8 @@ use one of the alternative solutions instead:
 
 ;;; Misc
 
-;; Run Emacs server  if not already running.  This is to make Emacs  to open new
-;; files in the same frame (graphical window).
+;; Run Emacs server if not already  running.  This is to make Emacs to
+;; open new files in the same frame (graphical window).
 (require 'server)
 (when (not (server-running-p))
   (server-start))
