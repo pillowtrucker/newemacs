@@ -10,6 +10,5 @@ smex-items
 ido.last
 *~
 .cache
-custom.el
 var
 straight

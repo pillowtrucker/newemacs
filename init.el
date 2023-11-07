@@ -42,10 +42,6 @@
   (error "This Emacs version is unsupported, please upgrade to at least Emacs %s"
 	 om-min-emacs-version))
 
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
 (defun om-config-executable-find (command)
   "Search for COMMAND and return the absolute file name.
 
@@ -223,7 +219,8 @@ use one of the alternative solutions instead:
 (windmove-default-keybindings)
 
 ;; On a text terminal, the `C-z' command suspends Emacs. Turn this off.
-(global-unset-key (kbd "C-z"))
+;; No, fuck you, this is the easiest way to kill an unresponsive emacs.
+;; (global-unset-key (kbd "C-z"))
 
 ;;; UI
 
@@ -234,14 +231,16 @@ use one of the alternative solutions instead:
 
 ;;; GUI
 
+
 (when (display-graphic-p)
-  ;; Configure system clipboard interop.
+  (when om-frame-font
+    (set-frame-font om-frame-font)))
+
+;; Configure system clipboard interop.
   (setq select-enable-clipboard             t
 	select-enable-primary               t
 	save-interprogram-paste-before-kill t
 	mouse-yank-at-point                 t)
-  (when om-frame-font
-    (set-frame-font om-frame-font)))
 
 ;;; GNU/Linux
 
@@ -314,6 +313,8 @@ use one of the alternative solutions instead:
 (use-package lsp-mode
   :hook     ((c-mode   . lsp-deferred)
 	     (c++-mode . lsp-deferred)
+	     (haskell-mode . lsp-deferred)
+	     (haskell-literate-mode . lsp-deferred)
 	     (lsp-mode . lsp-enable-which-key-integration))
   :config   (setq lsp-keymap-prefix       om-kbd-keymap-prefix-lsp
 		  lsp-clients-clangd-args '("--header-insertion=never"
@@ -385,6 +386,12 @@ use one of the alternative solutions instead:
 (require 'server)
 (when (not (server-running-p))
   (server-start))
+
+
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 
 (provide 'init)
 ;;; init.el ends here
