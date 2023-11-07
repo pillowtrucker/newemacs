@@ -310,16 +310,24 @@ use one of the alternative solutions instead:
   :init   (global-flycheck-mode +1))
 
 ;; https://emacs-lsp.github.io/lsp-mode/
+
 (use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-c l")
   :hook     ((c-mode   . lsp-deferred)
 	     (c++-mode . lsp-deferred)
-	     (haskell-mode . lsp-deferred)
-	     (haskell-literate-mode . lsp-deferred)
+	     (haskell-mode . lsp-mode)
+	     (haskell-literate-mode . lsp-mode)
 	     (lsp-mode . lsp-enable-which-key-integration))
-  :config   (setq lsp-keymap-prefix       om-kbd-keymap-prefix-lsp
+  :config
+  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  (setq lsp-keymap-prefix       om-kbd-keymap-prefix-lsp
 		  lsp-clients-clangd-args '("--header-insertion=never"
 					    "--completion-style=bundled"
-					    "--background-index"))
+					    "--background-index")
+		  
+		  )
+            
   :commands (lsp lsp-deferred))
 
 ;; https://github.com/emacs-lsp/lsp-ui
