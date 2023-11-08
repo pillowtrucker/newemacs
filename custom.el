@@ -51,6 +51,7 @@
   
   )
 
+(add-to-list 'auto-mode-alist '("\\.*rc$" . shell-script-mode))
 
 (provide 'custom.el)
 ;;; custom.el ends here

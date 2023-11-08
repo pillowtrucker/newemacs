@@ -109,7 +109,7 @@ use one of the alternative solutions instead:
 (defconst om-frame-font
   (pcase system-type
     ('darwin     "-*-Menlo-normal-normal-normal-*-14-*-*-*-m-0-iso10646-1")
-    ('gnu/linux  "-PfEd-DejaVu Sans Mono-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+    ('gnu/linux  "-ADBO-Hasklug Nerd Font Mono-regular-normal-normal-*-13-*-*-*-m-0-fontset-auto1")
     ('windows-nt "-outline-Consolas-normal-normal-normal-mono-32-*-*-*-c-*-iso8859-1"))
   "Frame font.")
 
