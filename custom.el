@@ -26,6 +26,21 @@
 (use-package xclip)
 (xclip-mode 1)
 
+;; for regex-highlights and other stuff
+(use-package icicles)
+(icicle-mode)
+
+;; for assigning blame
+(use-package git-timemachine)
+
+;; lol bolt
+(use-package rmsbolt)
+
+;; org-mode stuff
+(use-package org-edna)
+(use-package org-journal)
+(use-package org-contrib)
+
 ;; haskell
 ;(use-package haskell-literate-mode)
 (use-package haskell-mode
