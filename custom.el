@@ -30,6 +30,11 @@
 (use-package icicles)
 (icicle-mode)
 
+;; cmake
+(use-package cmake-mode)
+(use-package cmake-font-lock)
+
+
 ;; for assigning blame
 (use-package git-timemachine)
 
