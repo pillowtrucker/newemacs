@@ -55,7 +55,22 @@
 (use-package org-ql)
 (use-package helm-org-ql)
 (use-package hyperbole)
-(use-package org-roam)
+(use-package org-roam
+  :config
+  (setq org-roam-directory (file-truename "~/org-roam"))
+  (setq find-file-visit-truename t)
+  (org-roam-db-autosync-mode)
+  :bind
+  (("C-c n f" . org-roam-node-find)
+   ("C-c n r" . org-roam-node-random)
+   (:map org-mode-map
+         (("C-c n i" . org-roam-node-insert)
+          ("C-c n o" . org-id-get-create)
+          ("C-c n t" . org-roam-tag-add)
+          ("C-c n a" . org-roam-alias-add)
+          ("C-c n l" . org-roam-buffer-toggle))))
+  )
+
 (use-package org-roam-bibtex)
 (use-package org-roam-ql)
 (use-package org-roam-ui)
