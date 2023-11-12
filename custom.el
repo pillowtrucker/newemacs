@@ -29,6 +29,13 @@
 ;; for regex-highlights and other stuff
 (use-package icicles)
 (icicle-mode)
+(use-package popup)
+(use-package burly)
+
+;; nix
+(use-package nix-mode
+  :mode "\\.nix\\'")
+
 
 ;; cmake
 (use-package cmake-mode)
@@ -45,6 +52,48 @@
 (use-package org-edna)
 (use-package org-journal)
 (use-package org-contrib)
+(use-package org-ql)
+(use-package helm-org-ql)
+(use-package hyperbole)
+(use-package org-roam)
+(use-package org-roam-bibtex)
+(use-package org-roam-ql)
+(use-package org-roam-ui)
+(use-package delve
+  :straight (:repo "publicimageltd/delve"
+             :host github
+             :type git)
+  :after (org-roam)
+  ;; this is necessary if use-package-always-defer is true
+  :demand t
+  :bind
+  ;; the main entry point, offering a list of all stored collections
+  ;; and of all open Delve buffers:
+  (("C-c d" . delve))
+  :config
+  ;; set meaningful tag names for the dashboard query
+  (setq delve-dashboard-tags '("X13" "GAME"))
+  ;; optionally turn on compact view as default
+  (add-hook #'delve-mode-hook #'delve-compact-view-mode)
+ ;; turn on delve-minor-mode when Org Roam file is opened:
+  (delve-global-minor-mode))
+
+;; dashboard
+(use-package page-break-lines)
+(use-package all-the-icons)
+(use-package nerd-icons)
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  )
+
+;; docsets
+(use-package helm-dash)
+(use-package devdocs
+  :bind
+  ("C-c C-d" . devdocs-lookup)
+  )
 
 ;; haskell
 ;(use-package haskell-literate-mode)

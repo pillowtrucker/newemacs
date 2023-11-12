@@ -369,7 +369,7 @@ use one of the alternative solutions instead:
    (c-set-offset 'innamespace 0)
    (highlight-doxygen-mode +1)
    ;; https://www.emacswiki.org/emacs/ElectricPair
-   (electric-pair-mode +1)
+;; NO   (electric-pair-mode +1)
    ;; https://wikemacs.org/wiki/Subword-mode
    (subword-mode +1)
    (display-line-numbers-mode +1)
