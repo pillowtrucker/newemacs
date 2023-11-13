@@ -38,6 +38,23 @@
 (use-package nix-mode
   :mode "\\.nix\\'")
 
+;; music
+(use-package tidal
+  :config
+  (setq tidal-boot-script-path "/usr/share/haskell-tidal/BootTidal.hs")
+  (setq tidal-interpreter-arguments '("-package base"))
+  :hook
+  (tidal-mode . (lambda () (lsp-mode -1)))
+  )
+(use-package sclang)
+(use-package w3m
+  :config
+  (define-key w3m-mode-map [left] 'backward-char)
+  (define-key w3m-mode-map [right] 'forward-char)
+  (define-key w3m-mode-map [up] 'previous-line)
+  (define-key w3m-mode-map [down] 'next-line)
+  )
+
 
 ;; cmake
 (use-package cmake-mode)
