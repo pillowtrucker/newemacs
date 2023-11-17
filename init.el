@@ -51,7 +51,7 @@ returned by the function `exec-path'."
       command))
 
 ;;; Configuration variables
-
+(setq-default indent-tabs-mode nil)
 (defconst om-clang-location
   (pcase system-type
     ('darwin     (om-config-executable-find "clang"))
@@ -195,8 +195,8 @@ use one of the alternative solutions instead:
 ;; when you previously visited the same file.
 (save-place-mode +1)
 ;; Interactively DO things
-(ido-mode       +1)
-(ido-everywhere +1)
+(ido-mode       -1)
+(ido-everywhere -1)
 ;; Recent Files
 (recentf-mode   +1)
 ;; Change all yes/no  questions to y/n type so that  you don't need to
@@ -276,7 +276,7 @@ use one of the alternative solutions instead:
 
 ;; https://github.com/DarwinAwardWinner/ido-completing-read-plus
 (use-package ido-completing-read+
-  :config (ido-ubiquitous-mode +1))
+  :config (ido-ubiquitous-mode -1))
 
 ;; https://company-mode.github.io/
 (use-package company

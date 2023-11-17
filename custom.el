@@ -14,9 +14,31 @@
  '(custom-enabled-themes '(sanityinc-tomorrow-night))
  '(custom-safe-themes
    '("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
+ '(forge-alist
+   '(("github-pillow" "api.github.com" "github.com" forge-github-repository)
+     ("github.com" "api.github.com" "github.com" forge-github-repository)
+     ("gitlab.com" "gitlab.com/api/v4" "gitlab.com" forge-gitlab-repository)
+     ("salsa.debian.org" "salsa.debian.org/api/v4" "salsa.debian.org" forge-gitlab-repository)
+     ("framagit.org" "framagit.org/api/v4" "framagit.org" forge-gitlab-repository)
+     ("gitlab.gnome.org" "gitlab.gnome.org/api/v4" "gitlab.gnome.org" forge-gitlab-repository)
+     ("codeberg.org" "codeberg.org/api/v1" "codeberg.org" forge-gitea-repository)
+     ("code.orgmode.org" "code.orgmode.org/api/v1" "code.orgmode.org" forge-gogs-repository)
+     ("bitbucket.org" "api.bitbucket.org/2.0" "bitbucket.org" forge-bitbucket-repository)
+     ("git.savannah.gnu.org" nil "git.savannah.gnu.org" forge-cgit**-repository)
+     ("git.kernel.org" nil "git.kernel.org" forge-cgit-repository)
+     ("repo.or.cz" nil "repo.or.cz" forge-repoorcz-repository)
+     ("git.suckless.org" nil "git.suckless.org" forge-stagit-repository)
+     ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
  '(safe-local-variable-values
-   '((company-clang-arguments "-I/usr/include/libxml2" "-I/usr/include/ncursesw"))))
+   '((projectile-project-compilation-cmd . "cmake -S . -B build;cmake --build build --parallel 8")
+     (projectile-project-run-cmd . "./build/bin/miral-shell --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
+     (projectile-project-compilation-cmd . "cmake -S . -B build;cmake --build build")
+     (projectile-project-compile-cmd . "cmake -S . -B build;cmake --build build")
+     (projectile-project-compile-cmd . "cmake --build build")
+     (projectile-project-run-cmd . "./build/X13 --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
+     (projectile-project-run-cmd . "cd build;./X13 --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
+     (company-clang-arguments "-I/usr/include/libxml2" "-I/usr/include/ncursesw"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -32,7 +54,10 @@
 (use-package icicles)
 (icicle-mode)
 (use-package popup)
-(use-package burly)
+;; tab management
+(use-package bufler)
+;; github etc
+(use-package forge)
 
 ;; nix
 (use-package nix-mode
@@ -66,6 +91,12 @@
 
 ;; lol bolt
 (use-package rmsbolt)
+
+;; I like helm
+;(use-package helm
+;  :config (require 'helm-autoloads)
+;  )
+;(helm-mode 1)
 
 ;; org-mode stuff
 (use-package org-edna)
