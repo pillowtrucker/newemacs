@@ -164,8 +164,8 @@ use one of the alternative solutions instead:
 	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   (setq recentf-max-menu-items 5))
 
-(setq gc-cons-threshold                  50000000
-      large-file-warning-threshold       100000000
+(setq gc-cons-threshold                  (* 1024 1024 1024)
+      large-file-warning-threshold       (* 100 1024 1024)
       inhibit-startup-message            t
       load-prefer-newer                  t
       show-trailing-whitespace           t

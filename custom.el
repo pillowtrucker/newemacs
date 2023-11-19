@@ -31,7 +31,9 @@
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
  '(safe-local-variable-values
-   '((projectile-project-compilation-cmd . "cmake -S . -B build;cmake --build build --parallel 8")
+   '((projectile-project-run-cmd . "LD_LIBRARY_PATH=mir/build/lib/ MIR_SERVER_PLATFORM_PATH=mir/build/lib/server-modules/ ./build/X13 --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
+     (projectile-project-run-cmd . "LD_LIBRARY_PATH=./mir/build/lib/ MIR_SERVER_PLATFORM_PATH=.mir/build/lib/server-modules/ ./build/X13 --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
+     (projectile-project-compilation-cmd . "cmake -S . -B build;cmake --build build --parallel 8")
      (projectile-project-run-cmd . "./build/bin/miral-shell --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
      (projectile-project-compilation-cmd . "cmake -S . -B build;cmake --build build")
      (projectile-project-compile-cmd . "cmake -S . -B build;cmake --build build")
@@ -51,8 +53,8 @@
 (xclip-mode 1)
 
 ;; for regex-highlights and other stuff
-(use-package icicles)
-(icicle-mode)
+;(use-package icicles)
+;(icicle-mode)
 (use-package popup)
 ;; tab management
 (use-package bufler)
@@ -91,12 +93,8 @@
 
 ;; lol bolt
 (use-package rmsbolt)
+(add-to-list 'load-path "~/.emacs.d/")
 
-;; I like helm
-;(use-package helm
-;  :config (require 'helm-autoloads)
-;  )
-;(helm-mode 1)
 
 ;; org-mode stuff
 (use-package org-edna)
@@ -124,6 +122,16 @@
 (use-package org-roam-bibtex)
 (use-package org-roam-ql)
 (use-package org-roam-ui)
+;; emms
+(use-package emms)
+;; w3m
+(use-package w3m)
+;; I like helm
+(use-package epg)
+(use-package epa)
+(require 'helm-init)
+;(require 'emms-config.el)
+
 (use-package delve
   :straight (:repo "publicimageltd/delve"
              :host github
@@ -152,6 +160,7 @@
   :config
   (dashboard-setup-startup-hook)
   )
+(dashboard-setup-startup-hook)
 
 ;; docsets
 (use-package helm-dash)
@@ -173,7 +182,7 @@
   (keymap-set lsp-command-map "<remap> <lsp-execute-code-action>" 'helm-lsp-code-actions)
   :commands (helm-lsp-workspace-symbol helm-lsp-code-actions)
   )
-
+(keymap-set lsp-command-map "<remap> <lsp-execute-code-action>" 'helm-lsp-code-actions)
 (use-package dap-mode
   :defer
   :custom
