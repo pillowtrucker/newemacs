@@ -31,7 +31,15 @@
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
  '(safe-local-variable-values
-   '((projectile-project-run-cmd . "LD_LIBRARY_PATH=mir/build/lib/ MIR_SERVER_PLATFORM_PATH=mir/build/lib/server-modules/ ./build/X13 --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
+   '((projectile-project-run-cmd . "./build/GAME")
+     (projectile-project-compilation-cmd . "cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -S Linux -B Linux/build;cmake --build Linux/build --parallel 8;cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -S Linux/App -B Linux/App/build; cmake --build Linux/App/build --parallel 8")
+     (projectile-project-run-cmd . "ROOT=$(pwd);cd Linux/App/build;cmake -DBUILD_TESTING:BOOL=ON .;ctest --output-on-failure --verbose;cd $ROOT")
+     (projectile-project-run-cmd . "ROOT=$(pwd);cmake -DBUILD_TESTING:BOOL=ON Linux/App/build;cd Linux/App/build;ctest --output-on-failure --verbose;cd $ROOT")
+     (projectile-project-run-cmd . "cmake -DBUILD_TESTING:BOOL=ON Linux/App/build;ctest --output-on-failure --verbose Linux/App/build")
+     (projectile-project-compilation-cmd . "cmake -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -S Linux -B Linux/build;cmake --build Linux/build --parallel 8;cmake -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -S Linux/App -B Linux/App/build")
+     (projectile-project-compilation-cmd . "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -S . -B build;cmake --build build")
+     (projectile-project-compilation-cmd . "cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -S . -B build;cmake --build build --parallel 8")
+     (projectile-project-run-cmd . "LD_LIBRARY_PATH=mir/build/lib/ MIR_SERVER_PLATFORM_PATH=mir/build/lib/server-modules/ ./build/X13 --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
      (projectile-project-run-cmd . "LD_LIBRARY_PATH=./mir/build/lib/ MIR_SERVER_PLATFORM_PATH=.mir/build/lib/server-modules/ ./build/X13 --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
      (projectile-project-compilation-cmd . "cmake -S . -B build;cmake --build build --parallel 8")
      (projectile-project-run-cmd . "./build/bin/miral-shell --enable-x11 --platform-display-libs=mir:x11 --platform-rendering-libs=mir:egl-generic --debug")
@@ -60,6 +68,11 @@
 (use-package bufler)
 ;; github etc
 (use-package forge)
+(use-package emacsql-sqlite)
+(use-package code-review)
+(add-hook 'code-review-mode-hook #'emojify-mode)
+(setq code-review-fill-column 120)
+(setq code-review-auth-login-marker 'forge)
 
 ;; nix
 (use-package nix-mode
@@ -131,6 +144,28 @@
 (use-package epa)
 (require 'helm-init)
 ;(require 'emms-config.el)
+
+; quran
+; broken :(
+;(use-package holy-books
+;  :straight (:repo "alhassy/holy-books"
+;             :host github
+;             :type git
+;             )
+;  )
+;(setq holy-books-quran-translation "131"  ;; The Clear Quran
+;      holy-books-bible-version     "niv") ;; New International Version
+;(holy-books-mode)
+
+;translate
+(use-package go-translate)
+(setq gts-translate-list '(("ja" "en") ("fr" "en") ("en" "de") ("de" "en") ("pl" "en")))
+
+(setq gts-default-translator
+      (gts-translator
+       :picker (gts-prompt-picker)
+       :engines (list (gts-bing-engine) (gts-google-engine))
+       :render (gts-buffer-render)))
 
 (use-package delve
   :straight (:repo "publicimageltd/delve"

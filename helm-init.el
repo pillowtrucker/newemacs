@@ -282,7 +282,7 @@ new directory."
                 (message "Failed to change background"))))))
 
   (defun helm-ff-csv2ledger (candidate)
-    (csv2ledger "Socgen" candidate "/home/thierry/finance/ledger.dat"))
+    (csv2ledger "Socgen" candidate "/home/wrath/finance/ledger.dat"))
   
   (defun helm/update-directory-autoloads (candidate)
     (let ((default-directory helm-ff-default-directory)
@@ -434,12 +434,19 @@ new directory."
 (with-eval-after-load 'helm-dictionary ; Its autoloads are already loaded.
   (setq helm-dictionary-database
         '(("en-de" . "~/helm-dictionary/dic-en-de.iso")
-          ("de-en" . "~/helm-dictionary/dic-de-en.iso"))
+          ("de-en" . "~/helm-dictionary/dic-de-en.iso")
+          ("ja-en" . "~/helm-dictionary/dic-ja-en.iso")
+          ("en-ja" . "~/helm-dictionary/dic-en-ja.iso")
+          )
         helm-dictionary-online-dicts
         '(("translate.reference.com en->de" .
            "http://translate.reference.com/translate?query=%s&src=en&dst=de")
+          ("translate.reference.com en->ja" .
+           "http://translate.reference.com/translate?query=%s&src=en&dst=ja")
           ("translate.reference.com de->en" .
            "http://translate.reference.com/translate?query=%s&src=de&dst=en")
+          ("translate.reference.com ja->en" .
+           "http://translate.reference.com/translate?query=%s&src=ja&dst=en")
           ("en.wiktionary.org" . "http://en.wiktionary.org/wiki/%s")
           ("de.wiktionary.org" . "http://de.wiktionary.org/wiki/%s"))
         helm-dictionary-ignore-diacritics t))
@@ -565,7 +572,7 @@ First call indent, second complete symbol, third complete fname."
 ;;
 ;(use-package helm-fd)
 (with-eval-after-load 'helm-fd
-  (setq helm-fd-executable "fdfind")
+  (setq helm-fd-executable "fd")
   (defun helm-fd-pa (candidate)
     (with-helm-buffer
       (helm-ff-kill-or-find-buffer-fname
