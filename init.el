@@ -164,17 +164,17 @@ use one of the alternative solutions instead:
 	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   (setq recentf-max-menu-items 5))
 
-(setq gc-cons-threshold                  (* 8 1024 1024 1024)
+(setq gc-cons-threshold                  (* 2 1024 1024 1024)
       large-file-warning-threshold       (* 100 1024 1024)
       inhibit-startup-message            t
       load-prefer-newer                  t
       show-trailing-whitespace           t
       ring-bell-function                 'ignore
-      auto-save-default                  nil
+      auto-save-default                  100
       auto-save-list-file-prefix         nil
-      create-lockfiles                   nil
+      create-lockfiles                   t
       save-place-forget-unreadable-files nil)
-
+(setq read-process-output-max (* 20 1024 1024))
 (setq ido-use-filename-at-point              nil
       ido-use-virtual-buffers                t
       ido-enable-flex-matching               t

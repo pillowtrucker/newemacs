@@ -31,7 +31,24 @@
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
  '(safe-local-variable-values
-   '((projectile-project-run-cmd . "./build/GAME")
+   '((projectile-project-run-cmd . "cabal run")
+     (projectile-project-compilation-cmd . "cabal build --enable-shared")
+     (c-file-offsets
+      (innamespace . 0)
+      (substatement-open . 0)
+      (c . c-lineup-dont-change)
+      (inextern-lang . 0)
+      (comment-intro . c-lineup-dont-change)
+      (arglist-cont-nonempty . c-lineup-arglist)
+      (block-close . 0)
+      (statement-case-intro . ++)
+      (brace-list-intro . ++)
+      (cpp-define-intro . +))
+     (c-auto-align-backslashes)
+     (whitespace-style quote
+                       (face trailing empty tabs))
+     (whitespace-action)
+     (projectile-project-run-cmd . "./build/GAME")
      (projectile-project-compilation-cmd . "cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -S Linux -B Linux/build;cmake --build Linux/build --parallel 8;cmake -GNinja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -S Linux/App -B Linux/App/build; cmake --build Linux/App/build --parallel 8")
      (projectile-project-run-cmd . "ROOT=$(pwd);cd Linux/App/build;cmake -DBUILD_TESTING:BOOL=ON .;ctest --output-on-failure --verbose;cd $ROOT")
      (projectile-project-run-cmd . "ROOT=$(pwd);cmake -DBUILD_TESTING:BOOL=ON Linux/App/build;cd Linux/App/build;ctest --output-on-failure --verbose;cd $ROOT")
@@ -60,6 +77,9 @@
 (use-package xclip)
 (xclip-mode 1)
 
+;misc
+(setq auto-mode-alist (cons '("\\.ipp$" . c++-mode) auto-mode-alist))
+(setq compilation-scroll-output t)
 ;; for regex-highlights and other stuff
 ;(use-package icicles)
 ;(icicle-mode)
@@ -108,6 +128,9 @@
 (use-package rmsbolt)
 (add-to-list 'load-path "~/.emacs.d/")
 
+; slime + clasp
+(use-package slime)
+(setq inferior-lisp-program "clasp")
 
 ;; org-mode stuff
 (use-package org-edna)
