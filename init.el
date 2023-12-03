@@ -133,7 +133,10 @@ use one of the alternative solutions instead:
 (require 'package)
 (require 'recentf)
 (require 'saveplace)
-
+(make-directory "~/.emacs_backups/" t)
+(make-directory "~/.emacs_autosave/" t)
+(setq auto-save-file-name-transforms '((".*" "~/.emacs_autosave/" t)))
+(setq backup-directory-alist '(("." . "~/.emacs_backups/")))
 ;;;; Configure straight.el as a package manager
 ;; https://github.com/raxod502/straight.el
 (defvar straight-use-package-by-default t)
@@ -154,15 +157,9 @@ use one of the alternative solutions instead:
 ;; Install https://github.com/jwiegley/use-package
 (straight-use-package 'use-package)
 
+
 ;; Keep ~/.emacs.d clean
 ;; https://github.com/emacscollective/no-littering
-(use-package no-littering
-  :config
-  (add-to-list 'recentf-exclude no-littering-var-directory)
-  (add-to-list 'recentf-exclude no-littering-etc-directory)
-  (setq auto-save-file-name-transforms
-	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-  (setq recentf-max-menu-items 5))
 
 (setq gc-cons-threshold                  (* 2 1024 1024 1024)
       large-file-warning-threshold       (* 100 1024 1024)
@@ -171,7 +168,7 @@ use one of the alternative solutions instead:
       show-trailing-whitespace           t
       ring-bell-function                 'ignore
       auto-save-default                  100
-      auto-save-list-file-prefix         nil
+      auto-save-list-file-prefix         "autosave"
       create-lockfiles                   t
       save-place-forget-unreadable-files nil)
 (setq read-process-output-max (* 20 1024 1024))
@@ -179,6 +176,17 @@ use one of the alternative solutions instead:
       ido-use-virtual-buffers                t
       ido-enable-flex-matching               t
       ido-auto-merge-work-directories-length -1)
+   (setq no-littering-etc-directory
+         (expand-file-name "etc/" user-emacs-directory))
+   (setq no-littering-var-directory
+         (expand-file-name "var/" user-emacs-directory))
+(use-package no-littering
+  :config
+  (add-to-list 'recentf-exclude no-littering-var-directory)
+  (add-to-list 'recentf-exclude no-littering-etc-directory)
+  (setq auto-save-file-name-transforms
+	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+  (setq recentf-max-menu-items 5))
 
 ;; Enable blinking cursor.
 (blink-cursor-mode +1)
