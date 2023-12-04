@@ -133,6 +133,12 @@ use one of the alternative solutions instead:
 (require 'package)
 (require 'recentf)
 (require 'saveplace)
+(defun toggle-comment-on-line ()
+  "comment or uncomment current line"
+  (interactive)
+  (comment-or-uncomment-region (line-beginning-position) (line-end-position)))
+(global-set-key (kbd "C-;") 'toggle-comment-on-line)
+
 (make-directory "~/.emacs_backups/" t)
 (make-directory "~/.emacs_autosave/" t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs_autosave/" t)))
@@ -326,9 +332,19 @@ use one of the alternative solutions instead:
 	     (c++-mode . lsp-deferred)
 	     (haskell-mode . lsp-mode)
 	     (haskell-literate-mode . lsp-mode)
-	     (lsp-mode . lsp-enable-which-key-integration))
+	     (lsp-mode . lsp-enable-which-key-integration)
+             (lsp-mode . lsp-ui-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  (setq lsp-rust-analyzer-cargo-watch-command "clippy")
+  (setq lsp-eldoc-render-all t)
+  (setq lsp-idle-delay 0.3)
+  (setq lsp-rust-analyzer-display-lifetime-elision-hints-enable t)
+  (setq lsp-rust-analyzer-display-chaining-hints t)
+  (setq lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
+  (setq lsp-rust-analyzer-display-closure-return-type-hints t)
+  (setq lsp-rust-analyzer-display-parameter-hints t)
+  (setq lsp-rust-analyzer-display-reborrow-hints t)
   (setq lsp-keymap-prefix       om-kbd-keymap-prefix-lsp
 		  lsp-clients-clangd-args '("--header-insertion=never"
 					    "--completion-style=bundled"
@@ -338,8 +354,13 @@ use one of the alternative solutions instead:
             
   :commands (lsp lsp-deferred))
 
+
 ;; https://github.com/emacs-lsp/lsp-ui
 (use-package lsp-ui
+  :config
+  (setq lsp-ui-peek-always-show t)
+  (setq lsp-ui-sideline-show-hover t)
+  (setq lsp-ui-doc-enable nil)
   :commands lsp-ui-mode)
 
 ;; https://github.com/emacs-lsp/lsp-treemacs
