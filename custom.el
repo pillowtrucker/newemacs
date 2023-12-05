@@ -30,8 +30,11 @@
      ("git.suckless.org" nil "git.suckless.org" forge-stagit-repository)
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
+ '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(safe-local-variable-values
-   '((projectile-project-run-cmd . "cabal run")
+   '((projectile-project-run-cmd . "cargo run")
+     (projectile-project-compilation-cmd . "cargo build -j8")
+     (projectile-project-run-cmd . "cabal run")
      (projectile-project-compilation-cmd . "cabal build --enable-shared")
      (c-file-offsets
       (innamespace . 0)
@@ -278,11 +281,17 @@
   (dap-auto-configure-mode t                           "Automatically configure dap.")
   (dap-auto-configure-features
    '(sessions locals breakpoints expressions tooltip)  "Remove the button panel in the top.")
+  :hook
+  ((rustic-mode . dap-mode) (c++-mode . dap-mode))
   :config
   (require 'dap-lldb)
+  (require 'dap-cpptools)
   
   )
-
+(use-package minions
+  :config (minions-mode 1))
+(use-package ansi-color
+    :hook (compilation-filter . ansi-color-compilation-filter)) 
 (add-to-list 'auto-mode-alist '("\\.*rc$" . shell-script-mode))
 
 (provide 'custom.el)

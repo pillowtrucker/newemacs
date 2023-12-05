@@ -356,11 +356,22 @@ use one of the alternative solutions instead:
 
 
 ;; https://github.com/emacs-lsp/lsp-ui
+
+
 (use-package lsp-ui
   :config
   (setq lsp-ui-peek-always-show t)
+  (setq lsp-ui-peek-enable t)
   (setq lsp-ui-sideline-show-hover t)
-  (setq lsp-ui-doc-enable nil)
+  (setq lsp-ui-sideline-update-mode "line")
+  (setq lsp-ui-doc-enable t)
+  (setq lsp-lens-enable t)
+  (setq lsp-ui-sideline-show-code-actions t)
+  (setq lsp-ui-sideline-enable t)
+  (setq lsp-completion-show-detail t)
+  (define-key lsp-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  (define-key lsp-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  
   :commands lsp-ui-mode)
 
 ;; https://github.com/emacs-lsp/lsp-treemacs
