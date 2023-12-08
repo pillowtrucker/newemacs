@@ -288,6 +288,15 @@
   (require 'dap-cpptools)
   
   )
+(use-package smartparens
+  :config
+  (require 'smartparens-config)
+  (smartparens-mode +1)  
+  :hook
+  ((rustic-mode . smartparens-mode) (c++-mode . smartparens-mode))
+  )
+
+
 (use-package minions
   :config (minions-mode 1))
 (use-package ansi-color
