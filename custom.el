@@ -92,12 +92,13 @@
               ("C-c C-c q" . lsp-workspace-restart)
               ("C-c C-c Q" . lsp-workspace-shutdown)
               ("C-c C-c s" . lsp-rust-analyzer-status))
+;;  :hook ((rustic-mode . electric-pair-mode))
   :config
   ;; uncomment for less flashiness
   ;; (setq lsp-eldoc-hook nil)
   ;; (setq lsp-enable-symbol-highlighting nil)
   ;; (setq lsp-signature-auto-activate nil)
-
+  
   ;; comment to disable rustfmt on save
   (setq rustic-format-on-save t)
   (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
@@ -288,13 +289,7 @@
   (require 'dap-cpptools)
   
   )
-(use-package smartparens
-  :config
-  (require 'smartparens-config)
-  (smartparens-mode +1)  
-  :hook
-  ((rustic-mode . smartparens-mode) (c++-mode . smartparens-mode))
-  )
+
 
 
 (use-package minions
