@@ -14,6 +14,89 @@
  '(custom-enabled-themes '(sanityinc-tomorrow-night))
  '(custom-safe-themes
    '("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
+ '(dape-breakpoint-global-mode t)
+ '(dape-buffer-window-arrangment 'gud)
+ '(dape-configs
+   '((codelldb-cc modes
+                  (c-mode c-ts-mode c++-mode c++-ts-mode)
+                  command "~/.emacs.d/debug-adapters/codelldb/extension/adapter/codelldb" command-cwd dape-cwd-fn :type "lldb" :request "launch" command-args
+                  ("--port" :autoport)
+                  ensure dape-ensure-command port :autoport fn dape-config-autoport :cwd dape-cwd-fn :program dape-find-file :args
+                  [])
+     (codelldb-rust modes
+                    (rust-mode rust-ts-mode)
+                    command "~/.emacs.d/debug-adapters/codelldb/extension/adapter/codelldb" command-cwd dape-cwd-fn :type "lldb" :request "launch" command-args
+                    ("--port" :autoport "--settings" "{\"sourceLanguages\":[\"rust\"]}")
+                    ensure dape-ensure-command port :autoport fn dape-config-autoport :cwd dape-cwd-fn :program dape-find-file :args
+                    []
+                    env "{\"CARGO_MANIFEST_DIR\":\"${workspaceFolder}\"}" :environment "[{\"name\":\"CARGO_MANIFEST_DIR\", \"value\":\"${workspaceFolder}\"}]")
+     (cpptools modes
+               (c-mode c-ts-mode c++-mode c++-ts-mode)
+               command "~/.emacs.d/debug-adapters/cpptools/extension/debugAdapters/bin/OpenDebugAD7" :type "cppdbg" :request "launch" ensure dape-ensure-command :cwd dape-cwd-fn :program dape-find-file :MIMode "lldb")
+     (debugpy modes
+              (python-mode python-ts-mode)
+              command "python3" command-args
+              ("-m" "debugpy.adapter")
+              :type "executable" :request "launch" ensure
+              (lambda
+                (config)
+                (let
+                    ((python
+                      (dape--config-eval-value
+                       (plist-get config 'command))))
+                  (unless
+                      (zerop
+                       (call-process-shell-command
+                        (format "%s -c \"import debugpy.adapter\"" python)))
+                    (user-error "%s module debugpy is not installed" python))))
+              :cwd dape-cwd-fn :program dape-find-file-buffer-default :justMyCode nil :showReturnValue t)
+     (dlv command "dlv" command-args
+          ("dap" "--listen" "127.0.0.1::autoport")
+          command-cwd dape-cwd-fn :type "debug" :request "launch" modes
+          (go-mode go-ts-mode)
+          ensure dape-ensure-command fn dape-config-autoport port :autoport :cwd dape-cwd-fn :program dape-cwd-fn)
+     (flutter command "flutter" command-args
+              ("debug_adapter")
+              command-cwd dape-cwd-fn :type "dart" ensure dape-ensure-command modes
+              (dart-mode)
+              :cwd dape-cwd-fn :program dape-find-file-buffer-default :toolArgs
+              #[0 "\300\301\302\303!\"\207"
+                  [vector "-d" read-string "Device id: "]
+                  4])
+     (godot port 6006 :type "server" :request "launch" modes
+            (gdscript-mode)
+            :cwd dape-cwd-fn)
+     (js-debug-node modes
+                    (js-mode js-ts-mode)
+                    command "node" command-cwd "~/.emacs.d/debug-adapters/js-debug" :type "pwa-node" ensure
+                    #[257 "\300\1!\210\301\302\303\3\304\"!\302\303\4\305\"@!\"\306\1!?\205\36\0\307\310\2\"\207"
+                          [dape-ensure-command file-name-concat dape--config-eval-value plist-get command-cwd command-args file-exists-p user-error "File %S does not exist"]
+                          7 "\12\12(fn CONFIG)"]
+                    command-args
+                    ("src/dapDebugServer.js" :autoport)
+                    port :autoport fn dape-config-autoport :cwd dape-cwd-fn :program dape-find-file-buffer-default :outputCapture "console" :sourceMapRenames t :pauseForSourceMap nil :autoAttachChildProcesses t :console "internalConsole" :killBehavior "forceful")
+     (js-debug-chrome modes
+                      (js-mode js-ts-mode)
+                      command "node" command-cwd "~/.emacs.d/debug-adapters/js-debug" :type "pwa-chrome" ensure
+                      #[257 "\300\1!\210\301\302\303\3\304\"!\302\303\4\305\"@!\"\306\1!?\205\36\0\307\310\2\"\207"
+                            [dape-ensure-command file-name-concat dape--config-eval-value plist-get command-cwd command-args file-exists-p user-error "File %S does not exist"]
+                            7 "\12\12(fn CONFIG)"]
+                      command-args
+                      ("src/dapDebugServer.js" :autoport)
+                      port :autoport fn dape-config-autoport :trace t :url
+                      #[0 "\300\301\302\"\207"
+                          [read-string "Url: " "http://localhost:3000"]
+                          3]
+                      :webRoot dape-cwd-fn :outputCapture "console")
+     (lldb-vscode modes
+                  (c-mode c-ts-mode c++-mode c++-ts-mode rust-mode rust-ts-mode)
+                  command "lldb-vscode" :type "lldb-vscode" ensure dape-ensure-command :cwd dape-cwd-fn :program dape-find-file)
+     (netcoredbg modes
+                 (csharp-mode csharp-ts-mode)
+                 command "netcoredbg" :request "launch" ensure dape-ensure-command command-args
+                 ["--interpreter=vscode"]
+                 :cwd dape-cwd-fn :program dape-find-file :stopAtEntry nil)))
+ '(dape-cwd-fn 'projectile-project-root)
  '(forge-alist
    '(("github-pillow" "api.github.com" "github.com" forge-github-repository)
      ("github.com" "api.github.com" "github.com" forge-github-repository)
@@ -32,7 +115,8 @@
  '(lsp-auto-configure t)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(safe-local-variable-values
-   '((projectile-project-run-cmd . "cargo run")
+   '((dape)
+     (projectile-project-run-cmd . "cargo run")
      (projectile-project-compilation-cmd . "cargo build -j8")
      (projectile-project-run-cmd . "cabal run")
      (projectile-project-compilation-cmd . "cabal build --enable-shared")
