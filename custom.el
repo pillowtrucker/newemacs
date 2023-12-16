@@ -6,14 +6,15 @@
 
 ;; color theme
 (use-package color-theme-sanityinc-tomorrow)
+(use-package gruvbox-theme)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(sanityinc-tomorrow-night))
+ '(custom-enabled-themes '(gruvbox-dark-hard))
  '(custom-safe-themes
-   '("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
+   '("871b064b53235facde040f6bdfa28d03d9f4b966d8ce28fb1725313731a2bcc8" "046a2b81d13afddae309930ef85d458c4f5d278a69448e5a5261a5c78598e012" "d445c7b530713eac282ecdeea07a8fa59692c83045bf84dd112dd738c7bcad1d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
  '(dape-breakpoint-global-mode t)
  '(dape-buffer-window-arrangment 'gud)
  '(dape-configs
@@ -113,9 +114,22 @@
      ("git.suckless.org" nil "git.suckless.org" forge-stagit-repository)
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
+ '(lsp-rust-analyzer-cargo-watch-command "clippy")
+ '(lsp-rust-analyzer-diagnostics-disabled ["parse_async_move_block_in_2015"])
+ '(lsp-rust-analyzer-diagnostics-enable-experimental t)
+ '(lsp-rust-analyzer-display-chaining-hints t)
+ '(lsp-rust-analyzer-display-closure-return-type-hints t)
+ '(lsp-rust-analyzer-display-lifetime-elision-hints-enable t)
+ '(lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
+ '(lsp-rust-analyzer-display-parameter-hints t)
+ '(lsp-rust-analyzer-display-reborrow-hints t)
+ '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(safe-local-variable-values
-   '((dape)
+   '((projectile-project-run-cmd . "cargo run -j8")
+     (projectile-project-run-cmd . "cargo runcc -c runcc.yml")
+     (projectile-project-run-cmd . "cargo runcc")
+     (dape)
      (projectile-project-run-cmd . "cargo run")
      (projectile-project-compilation-cmd . "cargo build -j8")
      (projectile-project-run-cmd . "cabal run")
