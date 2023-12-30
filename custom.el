@@ -126,7 +126,10 @@
  '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(safe-local-variable-values
-   '((projectile-project-run-cmd . "cargo run -j8")
+   '((projectile-project-run-cmd . "cargo run -j8 -- --shadow-resolution 16384 --shadow-distance 100")
+     (projectile-project-run-cmd . "cargo run -j8 -- --shadow-resolution 8192 --shadow-distance 50 --directional-light \"-1.0, -4.0, 2.0\"  --gltf-disable-directional-lights")
+     (projectile-project-run-cmd . "cargo run -j8 -- --shadow-resolution 8192 --shadow-distance 50 --directional-light \"-1.0, -4.0, 2.0\" ")
+     (projectile-project-run-cmd . "cargo run -j8")
      (projectile-project-run-cmd . "cargo runcc -c runcc.yml")
      (projectile-project-run-cmd . "cargo runcc")
      (dape)
@@ -421,7 +424,16 @@
    (setq dape-cwd-fn 'projectile-project-root)
   )
 
+(require 'gluon-mode)
+(setq auto-mode-alist (cons '("\\.glu$" . gluon-mode) auto-mode-alist))
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-language-id-configuration
+    '(gluon-mode . "gluon")))
 
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection "gluon_language-server")
+                  :activation-fn (lsp-activate-on "gluon")
+                  :server-id 'gluon))
 (use-package minions
   :config (minions-mode 1))
 (use-package ansi-color

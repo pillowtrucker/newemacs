@@ -167,7 +167,7 @@ use one of the alternative solutions instead:
 ;; Keep ~/.emacs.d clean
 ;; https://github.com/emacscollective/no-littering
 
-(setq gc-cons-threshold                  (* 2 1024 1024 1024)
+(setq gc-cons-threshold                  (* 3 1024 1024 1024)
       large-file-warning-threshold       (* 100 1024 1024)
       inhibit-startup-message            t
       load-prefer-newer                  t
@@ -332,6 +332,7 @@ use one of the alternative solutions instead:
 	     (c++-mode . lsp-deferred)
 	     (haskell-mode . lsp-mode)
 	     (haskell-literate-mode . lsp-mode)
+             (gluon-mode . lsp-mode)
 	     (lsp-mode . lsp-enable-which-key-integration)
              (lsp-mode . lsp-ui-mode))
   :config
