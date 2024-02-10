@@ -249,7 +249,7 @@ use one of the alternative solutions instead:
 (when (display-graphic-p)
   (when om-frame-font
     (set-frame-font om-frame-font)))
-
+;(set-frame-font "Iosevka Extended 12" nil t)
 ;; Configure system clipboard interop.
   (setq select-enable-clipboard             t
 	select-enable-primary               t
