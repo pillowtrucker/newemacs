@@ -426,14 +426,14 @@
 
 (require 'gluon-mode)
 (setq auto-mode-alist (cons '("\\.glu$" . gluon-mode) auto-mode-alist))
-;(with-eval-after-load 'lsp-mode
-;  (add-to-list 'lsp-language-id-configuration
-;    '(gluon-mode . "gluon")))
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-language-id-configuration
+    '(gluon-mode . "gluon")))
 
-;(lsp-register-client
-; (make-lsp-client :new-connection (lsp-stdio-connection "gluon_language-server")
-;                  :activation-fn (lsp-activate-on "gluon")
-;                  :server-id 'gluon))
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection "gluon_language-server")
+                  :activation-fn (lsp-activate-on "gluon")
+                  :server-id 'gluon))
 (use-package minions
   :config (minions-mode 1))
 (use-package ansi-color

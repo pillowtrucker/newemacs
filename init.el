@@ -169,6 +169,7 @@ use one of the alternative solutions instead:
 
 (setq gc-cons-threshold                  (* 3 1024 1024 1024)
       large-file-warning-threshold       (* 100 1024 1024)
+      max-lisp-eval-depth                10000
       inhibit-startup-message            t
       load-prefer-newer                  t
       show-trailing-whitespace           t
