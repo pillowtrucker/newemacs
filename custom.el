@@ -114,19 +114,58 @@
      ("git.suckless.org" nil "git.suckless.org" forge-stagit-repository)
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
- '(lsp-rust-analyzer-cargo-watch-command "clippy")
+ '(lsp-rust-analyzer-cargo-watch-command "clippy" t)
  '(lsp-rust-analyzer-diagnostics-disabled ["parse_async_move_block_in_2015"])
  '(lsp-rust-analyzer-diagnostics-enable-experimental t)
- '(lsp-rust-analyzer-display-chaining-hints t)
- '(lsp-rust-analyzer-display-closure-return-type-hints t)
- '(lsp-rust-analyzer-display-lifetime-elision-hints-enable t)
- '(lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
- '(lsp-rust-analyzer-display-parameter-hints t)
- '(lsp-rust-analyzer-display-reborrow-hints t)
+ '(lsp-rust-analyzer-display-chaining-hints t t)
+ '(lsp-rust-analyzer-display-closure-return-type-hints t t)
+ '(lsp-rust-analyzer-display-lifetime-elision-hints-enable t t)
+ '(lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t t)
+ '(lsp-rust-analyzer-display-parameter-hints t t)
+ '(lsp-rust-analyzer-display-reborrow-hints t t)
  '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(safe-local-variable-values
-   '((projectile-project-run-cmd . "cargo run -j8 -- --shadow-resolution 16384 --shadow-distance 100")
+   '((eval progn
+           (require 'lisp-mode)
+           (defun emacs27-lisp-fill-paragraph
+               (&optional justify)
+             (interactive "P")
+             (or
+              (fill-comment-paragraph justify)
+              (let
+                  ((paragraph-start
+                    (concat paragraph-start "\\|\\s-*\\([(;\"]\\|\\s-:\\|`(\\|#'(\\)"))
+                   (paragraph-separate
+                    (concat paragraph-separate "\\|\\s-*\".*[,\\.]$"))
+                   (fill-column
+                    (if
+                        (and
+                         (integerp emacs-lisp-docstring-fill-column)
+                         (derived-mode-p 'emacs-lisp-mode))
+                        emacs-lisp-docstring-fill-column fill-column)))
+                (fill-paragraph justify))
+              t))
+           (setq-local fill-paragraph-function #'emacs27-lisp-fill-paragraph))
+     (geiser-repl-per-project-p . t)
+     (eval with-eval-after-load 'yasnippet
+           (let
+               ((guix-yasnippets
+                 (expand-file-name "etc/snippets/yas"
+                                   (locate-dominating-file default-directory ".dir-locals.el"))))
+             (unless
+                 (member guix-yasnippets yas-snippet-dirs)
+               (add-to-list 'yas-snippet-dirs guix-yasnippets)
+               (yas-reload-all))))
+     (eval setq-local guix-directory
+           (locate-dominating-file default-directory ".dir-locals.el"))
+     (eval add-to-list 'completion-ignored-extensions ".go")
+     (eval modify-syntax-entry 43 "'")
+     (eval modify-syntax-entry 36 "'")
+     (eval modify-syntax-entry 126 "'")
+     (geiser-guile-binary "guix" "repl")
+     (geiser-insert-actual-lambda)
+     (projectile-project-run-cmd . "cargo run -j8 -- --shadow-resolution 16384 --shadow-distance 100")
      (projectile-project-run-cmd . "cargo run -j8 -- --shadow-resolution 8192 --shadow-distance 50 --directional-light \"-1.0, -4.0, 2.0\"  --gltf-disable-directional-lights")
      (projectile-project-run-cmd . "cargo run -j8 -- --shadow-resolution 8192 --shadow-distance 50 --directional-light \"-1.0, -4.0, 2.0\" ")
      (projectile-project-run-cmd . "cargo run -j8")
@@ -437,7 +476,7 @@
 (use-package minions
   :config (minions-mode 1))
 (use-package ansi-color
-    :hook (compilation-filter . ansi-color-compilation-filter)) 
+    :hook (compilation-filter . ansi-color-compilation-filter))
 (add-to-list 'auto-mode-alist '("\\.*rc$" . shell-script-mode))
 
 (use-package yaml-mode
@@ -446,10 +485,42 @@
   (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
   (define-key yaml-mode-map "\C-m" 'newline-and-indent)
   )
+;(use-package geiser-guile)
+;(use-package geiser)
+;(use-package guix)
+;(use-package lsp-scheme
+;  :straight (
+;             :repo "rgherdt/emacs-lsp-scheme"
+;                   :host codeberg
+;                   :type git)
+;
+;  
+;  
+;  )
+;; Assuming the Guix checkout is in ~/src/guix.
+;(with-eval-after-load 'geiser-guile
+;  (dolist (e '("." "..." "/home/wrath/.guix-profile/share/guile/site/2.2" "~/.config/guix/current/share/guile/site/3.0/" "~/nonguix/nongnu" "~/nonguix/nonguix")) (add-to-list 'geiser-guile-load-path e)))
+;(add-to-list 'load-path "~/.emacs.d/lisp/emacs-lsp-scheme/")
+;(add-to-list 'load-path "~/.guix-profile/bin/")
+;(require 'lsp-scheme)
+;(setq lsp-scheme-implementation "guile") ;;; also customizable
+;(add-hook 'scheme-mode-hook #'lsp-scheme-guile)
+;(add-hook 'scheme-mode-hook #'lsp-scheme)
 
-;(use-package nix-mode
-;  :hook (nix-mode . lsp-deferred)
-;  :ensure t)
+
+
+(use-package nix-mode
+  :hook (nix-mode . lsp-deferred)
+  :ensure t)
 ;(setq lsp-nix-nil-server-path "/home/wrath/.cargo/bin/nil")
+;(with-eval-after-load 'lsp-mode
+;  (lsp-register-client
+;    (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
+;                     :major-modes '(nix-mode)
+;                     :priority 0
+;                     :server-id 'nixd)))
+(use-package envrc)
+(with-eval-after-load 'envrc
+  (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
 (provide 'custom.el)
 ;;; custom.el ends here

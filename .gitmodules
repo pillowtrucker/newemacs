@@ -1,0 +1,3 @@
+[submodule "lisp/emacs-lsp-scheme"]
+	path = lisp/emacs-lsp-scheme
+	url = https://codeberg.org/rgherdt/emacs-lsp-scheme
