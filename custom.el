@@ -519,8 +519,11 @@
 ;                     :major-modes '(nix-mode)
 ;                     :priority 0
 ;                     :server-id 'nixd)))
-(use-package envrc)
+(use-package envrc
+  :init (envrc-global-mode)
+  )
 (with-eval-after-load 'envrc
   (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
+
 (provide 'custom.el)
 ;;; custom.el ends here
