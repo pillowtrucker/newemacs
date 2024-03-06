@@ -423,12 +423,12 @@ use one of the alternative solutions instead:
 
 ;;; ue.el
 ;; https://gitlab.com/unrealemacs/ue.el
-(use-package ue
-  :init   (ue-global-mode +1)
-  :config (define-key
-	    ue-mode-map
-	    om-kbd-keymap-prefix-ue
-	    'ue-command-map))
+;(use-package ue
+;  :init   (ue-global-mode +1)
+;  :config (define-key
+;	    ue-mode-map
+;	    om-kbd-keymap-prefix-ue
+;	    'ue-command-map))
 
 ;;; Misc
 
