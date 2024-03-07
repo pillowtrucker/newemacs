@@ -114,15 +114,16 @@
      ("git.suckless.org" nil "git.suckless.org" forge-stagit-repository)
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
- '(lsp-rust-analyzer-cargo-watch-command "clippy" t)
+ '(lsp-haskell-server-path "haskell-language-server")
+ '(lsp-rust-analyzer-cargo-watch-command "clippy")
  '(lsp-rust-analyzer-diagnostics-disabled ["parse_async_move_block_in_2015"])
  '(lsp-rust-analyzer-diagnostics-enable-experimental t)
- '(lsp-rust-analyzer-display-chaining-hints t t)
- '(lsp-rust-analyzer-display-closure-return-type-hints t t)
- '(lsp-rust-analyzer-display-lifetime-elision-hints-enable t t)
- '(lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t t)
- '(lsp-rust-analyzer-display-parameter-hints t t)
- '(lsp-rust-analyzer-display-reborrow-hints t t)
+ '(lsp-rust-analyzer-display-chaining-hints t)
+ '(lsp-rust-analyzer-display-closure-return-type-hints t)
+ '(lsp-rust-analyzer-display-lifetime-elision-hints-enable t)
+ '(lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names t)
+ '(lsp-rust-analyzer-display-parameter-hints t)
+ '(lsp-rust-analyzer-display-reborrow-hints t)
  '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(safe-local-variable-values
@@ -365,24 +366,24 @@
        :engines (list (gts-bing-engine) (gts-google-engine))
        :render (gts-buffer-render)))
 
-(use-package delve
-  :straight (:repo "publicimageltd/delve"
-             :host github
-             :type git)
-  :after (org-roam)
-  ;; this is necessary if use-package-always-defer is true
-  :demand t
-  :bind
-  ;; the main entry point, offering a list of all stored collections
-  ;; and of all open Delve buffers:
-  (("C-c d" . delve))
-  :config
-  ;; set meaningful tag names for the dashboard query
-  (setq delve-dashboard-tags '("X13" "GAME"))
-  ;; optionally turn on compact view as default
-  (add-hook #'delve-mode-hook #'delve-compact-view-mode)
- ;; turn on delve-minor-mode when Org Roam file is opened:
-  (delve-global-minor-mode))
+;(use-package delve
+;  :straight (:repo "publicimageltd/delve"
+;             :host github
+;             :type git)
+;  :after (org-roam)
+;  ;; this is necessary if use-package-always-defer is true
+;  :demand t
+;  :bind
+;  ;; the main entry point, offering a list of all stored collections
+;  ;; and of all open Delve buffers:
+;  (("C-c d" . delve))
+;  :config
+;  ;; set meaningful tag names for the dashboard query
+;  (setq delve-dashboard-tags '("X13" "GAME"))
+;  ;; optionally turn on compact view as default
+;  (add-hook #'delve-mode-hook #'delve-compact-view-mode)
+; ;; turn on delve-minor-mode when Org Roam file is opened:
+;  (delve-global-minor-mode))
 
 ;; dashboard
 (use-package page-break-lines)
@@ -524,6 +525,8 @@
   )
 (with-eval-after-load 'envrc
   (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
-
+(use-package diredc
+  :init (global-set-key (kbd "S-<f11>") 'diredc)
+  )
 (provide 'custom.el)
 ;;; custom.el ends here
