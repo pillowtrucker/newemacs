@@ -115,6 +115,7 @@
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
  '(lsp-haskell-server-path "haskell-language-server")
+ '(lsp-nix-nil-formatter ["nixfmt"])
  '(lsp-rust-analyzer-cargo-watch-command "clippy")
  '(lsp-rust-analyzer-diagnostics-disabled ["parse_async_move_block_in_2015"])
  '(lsp-rust-analyzer-diagnostics-enable-experimental t)
@@ -513,13 +514,15 @@
 (use-package nix-mode
   :hook (nix-mode . lsp-deferred)
   :ensure t)
+(add-hook 'nix-mode-hook
+          (lambda () (add-hook 'before-save-hook 'nix-format-before-save nil 'local)))
 ;(setq lsp-nix-nil-server-path "/home/wrath/.cargo/bin/nil")
-;(with-eval-after-load 'lsp-mode
-;  (lsp-register-client
-;    (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
-;                     :major-modes '(nix-mode)
-;                     :priority 0
-;                     :server-id 'nixd)))
+(with-eval-after-load 'lsp-mode
+  (lsp-register-client
+    (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
+                     :major-modes '(nix-mode)
+                     :priority -10
+                     :server-id 'nixd)))
 (use-package envrc
   :init (envrc-global-mode)
   )
@@ -528,5 +531,17 @@
 (use-package diredc
   :init (global-set-key (kbd "S-<f11>") 'diredc)
   )
+(lsp-defcustom lsp-nix-nil-max-mem 10000
+  "Max Memory MB"
+  :type 'number
+  :group 'lsp-nix-nil
+  :lsp-path "nil.nix.maxMemoryMB"
+  :package-version '(lsp-mode . "8.0.1"))
+(lsp-defcustom lsp-nix-nil-auto-eval-inputs t
+  "Auto-evaluate inputs"
+  :type 'boolean
+  :group 'lsp-nix-nil
+  :lsp-path "nil.nix.flake.autoEvalInputs"
+  :package-version '(lsp-mode . "8.0.1"))
 (provide 'custom.el)
 ;;; custom.el ends here
