@@ -168,9 +168,9 @@ use one of the alternative solutions instead:
 ;; Keep ~/.emacs.d clean
 ;; https://github.com/emacscollective/no-littering
 
-(setq gc-cons-threshold                  (* 3 1024 1024 1024)
+(setq gc-cons-threshold                  (* 10 1024 1024 1024)
       large-file-warning-threshold       (* 100 1024 1024)
-      max-lisp-eval-depth                10000
+      max-lisp-eval-depth                100000
       inhibit-startup-message            t
       load-prefer-newer                  t
       show-trailing-whitespace           t
