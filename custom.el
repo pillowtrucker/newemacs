@@ -128,7 +128,8 @@
  '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(safe-local-variable-values
-   '((eval progn
+   '((apheleia-inhibit . t)
+     (eval progn
            (require 'lisp-mode)
            (defun emacs27-lisp-fill-paragraph
                (&optional justify)
