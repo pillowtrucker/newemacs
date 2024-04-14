@@ -517,6 +517,8 @@
   :ensure t)
 (add-hook 'nix-mode-hook
           (lambda () (add-hook 'before-save-hook 'nix-format-before-save nil 'local)))
+(add-hook 'c++-mode-hook
+                    (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil 'local)))
 ;(setq lsp-nix-nil-server-path "/home/wrath/.cargo/bin/nil")
 (with-eval-after-load 'lsp-mode
   (lsp-register-client
