@@ -168,7 +168,7 @@ use one of the alternative solutions instead:
 ;; Keep ~/.emacs.d clean
 ;; https://github.com/emacscollective/no-littering
 
-(setq gc-cons-threshold                  (* 15 1024 1024 1024)
+(setq gc-cons-threshold                  (* 10 1024 1024 1024)
       large-file-warning-threshold       (* 100 1024 1024)
       max-lisp-eval-depth                100000
       inhibit-startup-message            t
@@ -310,7 +310,7 @@ use one of the alternative solutions instead:
 ;; https://magit.vc/
 (use-package magit)
 
-;; https://github.com/ludwigpacifici/modern-cpp-font-lock
+; https://github.com/ludwigpacifici/modern-cpp-font-lock
 (use-package modern-cpp-font-lock
   :config (modern-c++-font-lock-global-mode +1))
 
@@ -328,6 +328,11 @@ use one of the alternative solutions instead:
 ;; https://emacs-lsp.github.io/lsp-mode/
 
 (use-package lsp-mode
+  :straight (:repo "emacs-lsp/lsp-mode"
+                   :host github
+                   :type git)
+  
+  
   :init
   (setq lsp-keymap-prefix "C-c l")
   :hook     ((c-mode   . lsp-deferred)
@@ -362,6 +367,9 @@ use one of the alternative solutions instead:
 
 
 (use-package lsp-ui
+  :straight (:repo "emacs-lsp/lsp-ui"
+                   :host github
+                   :type git)
   :config
   (setq lsp-ui-peek-always-show t)
   (setq lsp-ui-peek-enable t)
@@ -379,6 +387,9 @@ use one of the alternative solutions instead:
 
 ;; https://github.com/emacs-lsp/lsp-treemacs
 (use-package lsp-treemacs
+    :straight (:repo "emacs-lsp/lsp-treemacs"
+                   :host github
+                   :type git)
   :commands (lsp-treemacs-errors-list
 	     lsp-treemacs-symbols)
   :config   (lsp-treemacs-sync-mode +1))
@@ -416,8 +427,8 @@ use one of the alternative solutions instead:
    ;; https://wikemacs.org/wiki/Subword-mode
    (subword-mode +1)
    (display-line-numbers-mode +1)
-   ;; Set the right margin according to Epic Games conding standard
-   (setq-local fill-column 120)
+   ;; Set the right margin according to my default clang-format
+   (setq-local fill-column 80)
    (local-set-key om-kbd-clang-format-buffer #'clang-format-buffer)
    (local-set-key om-kbd-yasnippet-complete  #'company-yasnippet)))
 

@@ -16,6 +16,7 @@
  '(custom-safe-themes
    '("871b064b53235facde040f6bdfa28d03d9f4b966d8ce28fb1725313731a2bcc8" "046a2b81d13afddae309930ef85d458c4f5d278a69448e5a5261a5c78598e012" "d445c7b530713eac282ecdeea07a8fa59692c83045bf84dd112dd738c7bcad1d" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default))
  '(dape-breakpoint-global-mode t)
+ '(dape-buffer-window-arrangement 'gud)
  '(dape-buffer-window-arrangment 'gud)
  '(dape-configs
    '((codelldb-cc modes
@@ -127,8 +128,13 @@
  '(lsp-rust-analyzer-display-reborrow-hints t)
  '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
+ '(org-fold-core-style 'overlays)
  '(safe-local-variable-values
-   '((apheleia-inhibit . t)
+   '((etags-regen-ignores "test/manual/etags/")
+     (etags-regen-regexp-alist
+      (("c" "objc")
+       "/[ \11]*DEFVAR_[A-Z_ \11(]+\"\\([^\"]+\\)\"/\\1/" "/[ \11]*DEFVAR_[A-Z_ \11(]+\"[^\"]+\",[ \11]\\([A-Za-z0-9_]+\\)/\\1/"))
+     (apheleia-inhibit . t)
      (eval progn
            (require 'lisp-mode)
            (defun emacs27-lisp-fill-paragraph
@@ -316,7 +322,11 @@
 (use-package org-contrib)
 (use-package org-ql)
 (use-package helm-org-ql)
-(use-package hyperbole)
+;(use-package hyperbole
+;    :straight (:repo "rswgnu/hyperbole"
+;                   :host github
+;                   :type git)
+;  )
 (use-package org-roam
   :config
   (setq org-roam-directory (file-truename "~/org-roam"))
