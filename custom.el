@@ -269,7 +269,25 @@
 ;(icicle-mode)
 (use-package popup)
 ;; tab management
-(use-package bufler)
+;(use-package bufler)
+(use-package tabspaces
+;  ;; use this next line only if you also use straight, otherwise ignore it. 
+  :straight (:type git :host github :repo "mclear-tools/tabspaces")
+;  :hook (after-init . tabspaces-mode) ;; use this only if you want the minor-mode loaded at startup. 
+  :commands (tabspaces-switch-or-create-workspace
+             tabspaces-open-or-create-project-and-workspace)
+  :custom
+  (tabspaces-use-filtered-buffers-as-default t)
+  (tabspaces-default-tab "Default")
+  (tabspaces-remove-to-default t)
+  (tabspaces-include-buffers '("*scratch*"))
+  (tabspaces-initialize-project-with-todo nil)
+;  (tabspaces-todo-file-name "project-todo.org")
+  ;; sessions
+  (tabspaces-session t)
+  (tabspaces-session-auto-restore t))
+;(setq tabspaces-keymap-prefix "\C-c\C-t")
+(tabspaces-mode 1)
 ;; github etc
 (use-package forge)
 (use-package emacsql-sqlite)
@@ -322,11 +340,13 @@
 (use-package org-contrib)
 (use-package org-ql)
 (use-package helm-org-ql)
-;(use-package hyperbole
-;    :straight (:repo "rswgnu/hyperbole"
-;                   :host github
-;                   :type git)
-;  )
+(use-package hyperbole
+    :straight (:repo "rswgnu/hyperbole"
+                   :host github
+                   :type git)
+  )
+(hyperbole-mode 1)
+(define-key hyperbole-mode-map (kbd "<mouse-3>")  'action-key)
 (use-package org-roam
   :config
   (setq org-roam-directory (file-truename "~/org-roam"))

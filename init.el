@@ -130,7 +130,7 @@ use one of the alternative solutions instead:
 
 ;;; Package management
 
-(require 'ido)
+;(require 'ido)
 (require 'package)
 (require 'recentf)
 (require 'saveplace)
@@ -180,10 +180,10 @@ use one of the alternative solutions instead:
       create-lockfiles                   t
       save-place-forget-unreadable-files nil)
 (setq read-process-output-max (* 20 1024 1024))
-(setq ido-use-filename-at-point              nil
-      ido-use-virtual-buffers                t
-      ido-enable-flex-matching               t
-      ido-auto-merge-work-directories-length -1)
+;(setq ido-use-filename-at-point              nil
+;      ido-use-virtual-buffers                t
+;      ido-enable-flex-matching               t
+;      ido-auto-merge-work-directories-length -1)
    (setq no-littering-etc-directory
          (expand-file-name "etc/" user-emacs-directory))
    (setq no-littering-var-directory
@@ -211,8 +211,8 @@ use one of the alternative solutions instead:
 ;; when you previously visited the same file.
 (save-place-mode +1)
 ;; Interactively DO things
-(ido-mode       -1)
-(ido-everywhere -1)
+;(ido-mode       -1)
+;(ido-everywhere -1)
 ;; Recent Files
 (recentf-mode   +1)
 ;; Change all yes/no  questions to y/n type so that  you don't need to
@@ -287,12 +287,13 @@ use one of the alternative solutions instead:
   :config  (smex-initialize))
 
 ;; https://github.com/justbur/emacs-which-key
-(use-package which-key
-  :config (which-key-mode +1))
+;(use-package which-key
+;  :config (which-key-mode +1))
+; helm overrides this anyway
 
 ;; https://github.com/DarwinAwardWinner/ido-completing-read-plus
-(use-package ido-completing-read+
-  :config (ido-ubiquitous-mode -1))
+;(use-package ido-completing-read+
+;  :config (ido-ubiquitous-mode -1))
 
 ;; https://company-mode.github.io/
 (use-package company
@@ -301,12 +302,12 @@ use one of the alternative solutions instead:
   :hook   (prog-mode . company-mode))
 
 ;; https://joaotavora.github.io/yasnippet/
-(use-package yasnippet
-  :config
-  (setq yas-indent-line 'fixed)
-  (yas-reload-all)
-  :hook   (prog-mode . yas-minor-mode))
-
+;(use-package yasnippet
+;  :config
+;  (setq yas-indent-line 'fixed)
+;  (yas-reload-all)
+;  :hook   (prog-mode . yas-minor-mode))
+; I don't actually use snippets
 ;; https://magit.vc/
 (use-package magit)
 
@@ -418,8 +419,8 @@ use one of the alternative solutions instead:
  'c++-mode-hook
  (lambda ()
    (setq c-default-style "bsd"
-	 c-basic-offset  4
-	 tab-width       4)
+	 c-basic-offset  2
+	 tab-width       2)
    (c-set-offset 'innamespace 0)
    (highlight-doxygen-mode +1)
    ;; https://www.emacswiki.org/emacs/ElectricPair
