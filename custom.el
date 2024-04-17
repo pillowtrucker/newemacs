@@ -115,6 +115,8 @@
      ("git.suckless.org" nil "git.suckless.org" forge-stagit-repository)
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
  '(lsp-auto-configure t)
+ '(lsp-clients-clangd-args
+   '("--header-insertion=iwyu" "--completion-style=bundled" "--background-index" "-j=8" "--clang-tidy" "--clang-tidy-checks=*" "--all-scopes-completion" "--completion-style=detailed" "--cross-file-rename" "--function-arg-placeholders=true" "--use-dirty-headers=true"))
  '(lsp-haskell-server-path "haskell-language-server")
  '(lsp-nix-nil-formatter ["nixfmt"])
  '(lsp-rust-analyzer-cargo-watch-command "clippy")
@@ -130,7 +132,9 @@
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(org-fold-core-style 'overlays)
  '(safe-local-variable-values
-   '((etags-regen-ignores "test/manual/etags/")
+   '((projectile-project-run-cmd . "~/godot-mine/result/bin/godot4 -e --path ~/if_your_happy_and_you_know_it/")
+     (projectile-project-compilation-cmd . "cmake -GNinja -S . -B build -DCMAKE_BUILD_TYPE=Debug -DTOOTING_WARNING_AS_ERROR=OFF -DBUILD_GUI=OFF -DWITH_DEMOS=OFF -DWITH_INSTRUMENTS=OFF -DWITH_WAVETABLES=OFF -DSYSTEM_SDL2=ON -DSYSTEM_ZLIB=ON -DSYSTEM_RTMIDI=ON -DSYSTEM_FFTW=OFF -DSYSTEM_FMT=ON -DSYSTEM_LIBSNDFILE=ON -DSYSTEM_FREETYPE=OFF -DWITH_RENDER_OPENGL=OFF -DWITH_RENDER_OPENGL1=OFF -DWITH_RENDER_SDL=OFF -DWITH_RENDER_DX9=OFF -DWITH_RENDER_DX11=OFF -DUSE_GLES=OFF -DUSE_SDL2=ON\12;cmake --build build --parallel 8")
+     (etags-regen-ignores "test/manual/etags/")
      (etags-regen-regexp-alist
       (("c" "objc")
        "/[ \11]*DEFVAR_[A-Z_ \11(]+\"\\([^\"]+\\)\"/\\1/" "/[ \11]*DEFVAR_[A-Z_ \11(]+\"[^\"]+\",[ \11]\\([A-Za-z0-9_]+\\)/\\1/"))
