@@ -270,24 +270,46 @@
 (use-package popup)
 ;; tab management
 ;(use-package bufler)
-(use-package tabspaces
+;(use-package tabspaces
 ;  ;; use this next line only if you also use straight, otherwise ignore it. 
-  :straight (:type git :host github :repo "mclear-tools/tabspaces")
+;  :straight (:type git :host github :repo "mclear-tools/tabspaces")
 ;  :hook (after-init . tabspaces-mode) ;; use this only if you want the minor-mode loaded at startup. 
-  :commands (tabspaces-switch-or-create-workspace
-             tabspaces-open-or-create-project-and-workspace)
-  :custom
-  (tabspaces-use-filtered-buffers-as-default t)
-  (tabspaces-default-tab "Default")
-  (tabspaces-remove-to-default t)
-  (tabspaces-include-buffers '("*scratch*"))
-  (tabspaces-initialize-project-with-todo nil)
+;  :commands (tabspaces-switch-or-create-workspace
+;             tabspaces-open-or-create-project-and-workspace)
+;  :custom
+;  (tabspaces-use-filtered-buffers-as-default t)
+;  (tabspaces-default-tab "Default")
+;  (tabspaces-remove-to-default t)
+;  (tabspaces-include-buffers '("*scratch*"))
+;  (tabspaces-initialize-project-with-todo nil)
 ;  (tabspaces-todo-file-name "project-todo.org")
   ;; sessions
-  (tabspaces-session t)
-  (tabspaces-session-auto-restore t))
+;  (tabspaces-session t)
+;  (tabspaces-session-auto-restore t))
 ;(setq tabspaces-keymap-prefix "\C-c\C-t")
-(tabspaces-mode 1)
+;(tabspaces-mode 1)
+(winner-mode 1)
+
+;; save some global vars
+;(setq desktop-globals-to-save nil)
+;(define-key global-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
+
+;(defun my-restore-frames ()
+;  "Restore desktop given initial non-daemon FRAME.
+;Intended for `after-make-frame-hook'."
+;  ;; Do stuff
+;  (desktop-save-mode 1)
+;  ;; save when quit
+;  (setq desktop-save t)
+;                                        ; load even crashed
+;  (setq desktop-load-locked-desktop t)
+;  (setq desktop-restore-frames t)
+;  (setq desktop-auto-save-timeout 300)
+;  (desktop-read)
+;  (remove-hook 'after-make-frame-hook 'my-restore-frames))
+
+;(add-hook 'after-make-frame-hook 'my-restore-frames)
+; huge fucking waste of time, just do it manually
 ;; github etc
 (use-package forge)
 (use-package emacsql-sqlite)
