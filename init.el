@@ -507,7 +507,7 @@ use one of the alternative solutions instead:
                    :type git)
   )
 (hyperbole-mode +1)
-;(define-key hyperbole-mode-map (kbd "<mouse-3>")  'action-key)
+(define-key hyperbole-mode-map (kbd "<mouse-3>")  'action-key)
 (use-package org-roam
   :config
   (setq org-roam-directory (file-truename "~/org-roam"))
