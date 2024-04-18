@@ -168,7 +168,7 @@ use one of the alternative solutions instead:
 ;; Keep ~/.emacs.d clean
 ;; https://github.com/emacscollective/no-littering
 
-(setq gc-cons-threshold                  (* 10 1024 1024 1024)
+(setq gc-cons-threshold                  (* 12 1024 1024 1024)
       large-file-warning-threshold       (* 100 1024 1024)
       max-lisp-eval-depth                100000
       inhibit-startup-message            t
@@ -179,11 +179,8 @@ use one of the alternative solutions instead:
       auto-save-list-file-prefix         "autosave"
       create-lockfiles                   t
       save-place-forget-unreadable-files nil)
-(setq read-process-output-max (* 20 1024 1024))
-;(setq ido-use-filename-at-point              nil
-;      ido-use-virtual-buffers                t
-;      ido-enable-flex-matching               t
-;      ido-auto-merge-work-directories-length -1)
+(setq read-process-output-max (* 100 1024 1024))
+
    (setq no-littering-etc-directory
          (expand-file-name "etc/" user-emacs-directory))
    (setq no-littering-var-directory
@@ -210,9 +207,7 @@ use one of the alternative solutions instead:
 ;; When you visit  a file, point goes  to the last place  where it was
 ;; when you previously visited the same file.
 (save-place-mode +1)
-;; Interactively DO things
-;(ido-mode       -1)
-;(ido-everywhere -1)
+
 ;; Recent Files
 (recentf-mode   +1)
 ;; Change all yes/no  questions to y/n type so that  you don't need to
@@ -248,10 +243,7 @@ use one of the alternative solutions instead:
 ;;; GUI
 
 
-;(when (display-graphic-p)
-;  (when om-frame-font
-;    (set-frame-font om-frame-font)))
-;(set-frame-font "Iosevka Extended 12" nil t)
+
 ;; Configure system clipboard interop.
   (setq select-enable-clipboard             t
 	select-enable-primary               t
@@ -282,19 +274,6 @@ use one of the alternative solutions instead:
 
 ;;; Convenient packages
 
-;; https://www.emacswiki.org/emacs/Smex
-(use-package smex
-  :config  (smex-initialize))
-
-;; https://github.com/justbur/emacs-which-key
-;(use-package which-key
-;  :config (which-key-mode +1))
-; helm overrides this anyway
-
-;; https://github.com/DarwinAwardWinner/ido-completing-read-plus
-;(use-package ido-completing-read+
-;  :config (ido-ubiquitous-mode -1))
-
 ;; https://company-mode.github.io/
 (use-package company
   :config (setq company-clang-executable      om-clang-location
@@ -302,12 +281,12 @@ use one of the alternative solutions instead:
   :hook   (prog-mode . company-mode))
 
 ;; https://joaotavora.github.io/yasnippet/
-;(use-package yasnippet
-;  :config
-;  (setq yas-indent-line 'fixed)
-;  (yas-reload-all)
-;  :hook   (prog-mode . yas-minor-mode))
-; I don't actually use snippets
+(use-package yasnippet
+  :config
+  (setq yas-indent-line 'fixed)
+  (yas-reload-all)
+  :hook   (prog-mode . yas-minor-mode))
+
 ;; https://magit.vc/
 (use-package magit)
 
@@ -332,8 +311,6 @@ use one of the alternative solutions instead:
   :straight (:repo "emacs-lsp/lsp-mode"
                    :host github
                    :type git)
-  
-  
   :init
   (setq lsp-keymap-prefix "C-c l")
   :hook     ((c-mode   . lsp-deferred)
@@ -354,18 +331,11 @@ use one of the alternative solutions instead:
   (setq lsp-rust-analyzer-display-closure-return-type-hints t)
   (setq lsp-rust-analyzer-display-parameter-hints t)
   (setq lsp-rust-analyzer-display-reborrow-hints t)
-  (setq lsp-keymap-prefix       om-kbd-keymap-prefix-lsp
-		  lsp-clients-clangd-args '("--header-insertion=never"
-					    "--completion-style=bundled"
-					    "--background-index")
-		  
-		  )
-            
+  (setq lsp-keymap-prefix om-kbd-keymap-prefix-lsp)            
   :commands (lsp lsp-deferred))
 
 
 ;; https://github.com/emacs-lsp/lsp-ui
-
 
 (use-package lsp-ui
   :straight (:repo "emacs-lsp/lsp-ui"
@@ -433,14 +403,6 @@ use one of the alternative solutions instead:
    (local-set-key om-kbd-clang-format-buffer #'clang-format-buffer)
    (local-set-key om-kbd-yasnippet-complete  #'company-yasnippet)))
 
-;;; ue.el
-;; https://gitlab.com/unrealemacs/ue.el
-;(use-package ue
-;  :init   (ue-global-mode +1)
-;  :config (define-key
-;	    ue-mode-map
-;	    om-kbd-keymap-prefix-ue
-;	    'ue-command-map))
 
 ;;; Misc
 
@@ -450,11 +412,255 @@ use one of the alternative solutions instead:
 (when (not (server-running-p))
   (server-start))
 
+;; color theme
+(use-package color-theme-sanityinc-tomorrow)
+(use-package gruvbox-theme)
+
+;; xclip
+(use-package xclip)
+(xclip-mode +1)
+
+;; hello darkness my old friend
+(use-package rustic
+  :ensure
+  :bind (:map rustic-mode-map
+              ("M-j" . lsp-ui-imenu)
+              ("M-?" . lsp-find-references)
+              ("C-c C-c l" . flycheck-list-errors)
+              ("C-c C-c a" . lsp-execute-code-action)
+              ("C-c C-c r" . lsp-rename)
+              ("C-c C-c q" . lsp-workspace-restart)
+              ("C-c C-c Q" . lsp-workspace-shutdown)
+              ("C-c C-c s" . lsp-rust-analyzer-status))
+;;  :hook ((rustic-mode . electric-pair-mode))
+  :config
+  ;; uncomment for less flashiness
+  ;; (setq lsp-eldoc-hook nil)
+  ;; (setq lsp-enable-symbol-highlighting nil)
+  ;; (setq lsp-signature-auto-activate nil)
+  
+  ;; comment to disable rustfmt on save
+  (setq rustic-format-on-save t)
+  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+(defun rk/rustic-mode-hook ()
+  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
+  ;; save rust buffers that are not file visiting. Once
+  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+  ;; no longer be necessary.
+  (when buffer-file-name
+    (setq-local buffer-save-without-query t))
+  (add-hook 'before-save-hook 'lsp-format-buffer nil t))
+
+;misc
+(setq auto-mode-alist (cons '("\\.ipp$" . c++-mode) auto-mode-alist))
+(setq compilation-scroll-output t)
+
+(use-package popup)
+
+(winner-mode 1)
+
+;(define-key global-map (kbd "C-x C-c") 'save-buffers-kill-emacs)
+
+;; github etc
+(use-package forge)
+(use-package emacsql-sqlite)
+(use-package code-review)
+(add-hook 'code-review-mode-hook #'emojify-mode)
+(setq code-review-fill-column 120)
+(setq code-review-auth-login-marker 'forge)
+
+
+(use-package w3m
+  :config
+  (define-key w3m-mode-map [left] 'backward-char)
+  (define-key w3m-mode-map [right] 'forward-char)
+  (define-key w3m-mode-map [up] 'previous-line)
+  (define-key w3m-mode-map [down] 'next-line)
+  )
+
+
+;; cmake
+(use-package cmake-mode)
+(use-package cmake-font-lock)
+
+;; for assigning blame
+(use-package git-timemachine)
+
+;; lol bolt
+(use-package rmsbolt)
+(add-to-list 'load-path "~/.emacs.d/")
+
+; slime + clasp
+(use-package slime)
+(setq inferior-lisp-program "clasp")
+
+;; org-mode stuff
+(use-package org-edna)
+(use-package org-journal)
+(use-package org-contrib)
+(use-package org-ql)
+(use-package helm-org-ql)
+(use-package hyperbole
+    :straight (:repo "rswgnu/hyperbole"
+                   :host github
+                   :type git)
+  )
+(hyperbole-mode +1)
+;(define-key hyperbole-mode-map (kbd "<mouse-3>")  'action-key)
+(use-package org-roam
+  :config
+  (setq org-roam-directory (file-truename "~/org-roam"))
+  (setq find-file-visit-truename t)
+  (org-roam-db-autosync-mode)
+  :bind
+  (("C-c n f" . org-roam-node-find)
+   ("C-c n r" . org-roam-node-random)
+   (:map org-mode-map
+         (("C-c n i" . org-roam-node-insert)
+          ("C-c n o" . org-id-get-create)
+          ("C-c n t" . org-roam-tag-add)
+          ("C-c n a" . org-roam-alias-add)
+          ("C-c n l" . org-roam-buffer-toggle))))
+  )
+
+(use-package org-roam-bibtex)
+(use-package org-roam-ql)
+(use-package org-roam-ui)
+;; emms
+(use-package emms)
+;; w3m
+(use-package w3m)
+;; I like helm
+(use-package epg)
+(use-package epa)
+(require 'helm-init)
+;(require 'emms-config.el)
+
+;translate
+(use-package go-translate)
+(setq gts-translate-list '(("ja" "en") ("fr" "en") ("en" "de") ("de" "en") ("pl" "en")))
+
+(setq gts-default-translator
+      (gts-translator
+       :picker (gts-prompt-picker)
+       :engines (list (gts-bing-engine) (gts-google-engine))
+       :render (gts-buffer-render)))
+
+
+;; dashboard
+(use-package page-break-lines)
+(use-package all-the-icons)
+(use-package nerd-icons)
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  )
+(dashboard-setup-startup-hook)
+
+;; docsets
+(use-package helm-dash)
+(use-package devdocs
+  :bind
+  ("C-c C-d" . devdocs-lookup)
+  )
+
+;; haskell
+;(use-package haskell-literate-mode)
+(use-package haskell-mode
+  :hook ((haskell-mode . turn-on-haskell-indentation))
+  )
+
+(use-package lsp-haskell)
+;; more lsp stuff
+(use-package helm-lsp
+  :config
+  (keymap-set lsp-command-map "<remap> <lsp-execute-code-action>" 'helm-lsp-code-actions)
+  :commands (helm-lsp-workspace-symbol helm-lsp-code-actions)
+  )
+(keymap-set lsp-command-map "<remap> <lsp-execute-code-action>" 'helm-lsp-code-actions)
+
+(use-package dape
+  :straight (:repo "/svaante/dape"
+                   :host github
+                   :type git)
+  ;; To use window configuration like gud (gdb-mi)
+   :init
+   (setq dape-buffer-window-arrangment 'gud)
+  :config
+  ;; Info buffers to the right
+  ;; (setq dape-buffer-window-arrangment 'right)
+
+  ;; To not display info and/or buffers on startup
+  ;; (remove-hook 'dape-on-start-hooks 'dape-info)
+  ;; (remove-hook 'dape-on-start-hooks 'dape-repl)
+
+  ;; To display info and/or repl buffers on stopped
+   (add-hook 'dape-on-stopped-hooks 'dape-info)
+   (add-hook 'dape-on-stopped-hooks 'dape-repl)
+
+  ;; By default dape uses gdb keybinding prefix
+   (setq dape-key-prefix "\C-x\C-a")
+
+  ;; Kill compile buffer on build success
+  ;; (add-hook 'dape-compile-compile-hooks 'kill-buffer)
+
+  ;; Save buffers on startup, useful for interpreted languages
+  ;; (add-hook 'dape-on-start-hooks
+  ;;           (defun dape--save-on-start ()
+  ;;             (save-some-buffers t t)))
+
+  ;; Projectile users
+   (setq dape-cwd-fn 'projectile-project-root)
+  )
+
+(require 'gluon-mode)
+(setq auto-mode-alist (cons '("\\.glu$" . gluon-mode) auto-mode-alist))
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-language-id-configuration
+    '(gluon-mode . "gluon")))
+
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection "gluon_language-server")
+                  :activation-fn (lsp-activate-on "gluon")
+                  :server-id 'gluon))
+(use-package minions
+  :config (minions-mode 1))
+(use-package ansi-color
+    :hook (compilation-filter . ansi-color-compilation-filter))
+(add-to-list 'auto-mode-alist '("\\.*rc$" . shell-script-mode))
+
+(use-package yaml-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
+  (define-key yaml-mode-map "\C-m" 'newline-and-indent)
+  )
+
+(use-package nix-mode
+  :hook (nix-mode . lsp-deferred)
+  :ensure t)
+(add-hook 'nix-mode-hook
+          (lambda () (add-hook 'before-save-hook 'nix-format-before-save nil 'local)))
+(add-hook 'c++-mode-hook
+                    (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil 'local)))
+;(setq lsp-nix-nil-server-path "/home/wrath/.cargo/bin/nil")
+(with-eval-after-load 'lsp-mode
+  (lsp-register-client
+    (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
+                     :major-modes '(nix-mode)
+                     :priority -10
+                     :server-id 'nixd)))
+(use-package envrc
+  :init (envrc-global-mode)
+  )
+(with-eval-after-load 'envrc
+  (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
 
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))
-
 
 (provide 'init)
 ;;; init.el ends here
