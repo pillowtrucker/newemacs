@@ -318,7 +318,7 @@ use one of the alternative solutions instead:
 	     (haskell-mode . lsp-deferred)
 	     (haskell-literate-mode . lsp-deferred)
              (gluon-mode . lsp-mode)
-	     (lsp-mode . lsp-enable-which-key-integration)
+;	     (lsp-mode . lsp-enable-which-key-integration)
              (lsp-mode . lsp-ui-mode))
   :config
   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
@@ -501,13 +501,13 @@ use one of the alternative solutions instead:
 (use-package org-contrib)
 (use-package org-ql)
 (use-package helm-org-ql)
-(use-package hyperbole
-    :straight (:repo "rswgnu/hyperbole"
-                   :host github
-                   :type git)
-  )
-(hyperbole-mode +1)
-(define-key hyperbole-mode-map (kbd "<mouse-3>")  'action-key)
+;(use-package hyperbole
+;    :straight (:repo "rswgnu/hyperbole"
+;                   :host github
+;                   :type git)
+;  )
+;(hyperbole-mode +1)
+;(define-key hyperbole-mode-map (kbd "<mouse-3>")  'action-key)
 (use-package org-roam
   :config
   (setq org-roam-directory (file-truename "~/org-roam"))
@@ -657,7 +657,19 @@ use one of the alternative solutions instead:
   )
 (with-eval-after-load 'envrc
   (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
-
+(use-package gdscript-mode
+    :straight (gdscript-mode
+               :type git
+               :host github
+               :repo "godotengine/emacs-gdscript-mode")
+    :hook (gdscript-mode . lsp-deferred)
+    )
+;(setq gdscript-use-tab-indents -1) ;; If true, use tabs for indents. Default: t
+;(setq gdscript-indent-offset 2) ;; Controls the width of tab-based indents ; both options incompatible with stupid gdformat
+(setq gdscript-gdformat-save-and-format -1) ;; Save all buffers and format them with gdformat anytime Godot executable is run.
+;(setq gdscript-godot-executable "~/godot-mine/result/bin/godot4")
+;(add-hook 'gdscript-mode-hook
+;          (lambda () (add-hook 'before-save-hook 'gdscript-format-buffer nil 'local)))
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))
