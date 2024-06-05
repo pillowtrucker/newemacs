@@ -42,7 +42,11 @@
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(org-fold-core-style 'overlays)
  '(safe-local-variable-values
-   '((eval remove-hook 'before-save-hook 'lsp-format-buffer t)
+   '((projectile-project-run-cmd . "./build/GAME")
+     (projectile-project-compilation-cmd . "cmake -S . -B build;cmake --build build")
+     (projectile-project-run-cmd . "cabal run")
+     (projectile-project-compilation-cmd . "cabal build --enable-shared")
+     (eval remove-hook 'before-save-hook 'lsp-format-buffer t)
      (projectile-project-run-cmd . "~/godot-mine/result/bin/godot4 -e --path ~/if_your_happy_and_you_know_it/")
      (projectile-project-compilation-cmd . "cmake -GNinja -S . -B build -DCMAKE_BUILD_TYPE=Debug -DTOOTING_WARNING_AS_ERROR=OFF -DBUILD_GUI=OFF -DWITH_DEMOS=OFF -DWITH_INSTRUMENTS=OFF -DWITH_WAVETABLES=OFF -DSYSTEM_SDL2=ON -DSYSTEM_ZLIB=ON -DSYSTEM_RTMIDI=ON -DSYSTEM_FFTW=OFF -DSYSTEM_FMT=ON -DSYSTEM_LIBSNDFILE=ON -DSYSTEM_FREETYPE=OFF -DWITH_RENDER_OPENGL=OFF -DWITH_RENDER_OPENGL1=OFF -DWITH_RENDER_SDL=OFF -DWITH_RENDER_DX9=OFF -DWITH_RENDER_DX11=OFF -DUSE_GLES=OFF -DUSE_SDL2=ON;cmake --build build --parallel 8"))))
 (custom-set-faces

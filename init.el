@@ -112,8 +112,10 @@ use one of the alternative solutions instead:
 ;    ('gnu/linux "-ADBO-Hasklug Nerd Font Mono-medium-normal-normal-*-16-*-*-*-m-0-iso10646-1") ;"-ADBO-Hasklug Nerd Font Mono-regular-normal-normal-*-13-*-*-*-m-0-fontset-auto1")
 ;    ('windows-nt "-outline-Consolas-normal-normal-normal-mono-32-*-*-*-c-*-iso8859-1"))
 ;  "Frame font.")
+;(add-to-list 'default-frame-alist
+;             '(font . "Hasklug Nerd Font 12"))
 (add-to-list 'default-frame-alist
-             '(font . "Hasklug Nerd Font 12"))
+             '(font . "CaskaydiaCove Nerd Font 12"))
 ;;;; Keys
 (defconst om-kbd-clang-format-buffer      (kbd "C-c f"))
 (defconst om-kbd-ibuffer                  (kbd "C-x C-b"))
@@ -673,6 +675,29 @@ use one of the alternative solutions instead:
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))
-
+(use-package ligature
+  :config
+  ;; Enable the "www" ligature in every possible major mode
+  (ligature-set-ligatures 't '("www"))
+  ;; Enable traditional ligature support in eww-mode, if the
+  ;; `variable-pitch' face supports it
+  (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+  ;; Enable all Cascadia Code ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("|||>" "<|||" "<==>" "<!--" "####" "~~>" "***" "||=" "||>"
+                                       ":::" "::=" "=:=" "===" "==>" "=!=" "=>>" "=<<" "=/=" "!=="
+                                       "!!." ">=>" ">>=" ">>>" ">>-" ">->" "->>" "-->" "---" "-<<"
+                                       "<~~" "<~>" "<*>" "<||" "<|>" "<$>" "<==" "<=>" "<=<" "<->"
+                                       "<--" "<-<" "<<=" "<<-" "<<<" "<+>" "</>" "###" "#_(" "..<"
+                                       "..." "+++" "/==" "///" "_|_" "www" "&&" "^=" "~~" "~@" "~="
+                                       "~>" "~-" "**" "*>" "*/" "||" "|}" "|]" "|=" "|>" "|-" "{|"
+                                       "[|" "]#" "::" ":=" ":>" ":<" "$>" "==" "=>" "!=" "!!" ">:"
+                                       ">=" ">>" ">-" "-~" "-|" "->" "--" "-<" "<~" "<*" "<|" "<:"
+                                       "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
+                                       "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
+                                       "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
+                                       "\\\\" "://"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
 (provide 'init)
 ;;; init.el ends here
