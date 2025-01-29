@@ -318,8 +318,10 @@ use one of the alternative solutions instead:
   :hook     ((c-mode   . lsp-deferred)
 	     (c++-mode . lsp-deferred)
 	     (haskell-mode . lsp-deferred)
+             (lua-mode . lsp-deferred)
 	     (haskell-literate-mode . lsp-deferred)
              (gluon-mode . lsp-mode)
+;             (tcl-mode . lsp-deferred)
 ;	     (lsp-mode . lsp-enable-which-key-integration)
              (lsp-mode . lsp-ui-mode))
   :config
@@ -458,6 +460,18 @@ use one of the alternative solutions instead:
 (setq auto-mode-alist (cons '("\\.ipp$" . c++-mode) auto-mode-alist))
 (setq compilation-scroll-output t)
 
+
+(use-package lua-mode)
+
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-language-id-configuration
+               '(tcl-mode . "tcl"))
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection "/home/wrath/tcl-lsp-flake/lsp/lsp.tcl")
+                    :activation-fn (lsp-activate-on "tcl")
+                    :server-id 'lsptcl)))
+
 (use-package popup)
 
 (winner-mode 1)
@@ -466,11 +480,11 @@ use one of the alternative solutions instead:
 
 ;; github etc
 (use-package forge)
-(use-package emacsql-sqlite)
-(use-package code-review)
-(add-hook 'code-review-mode-hook #'emojify-mode)
-(setq code-review-fill-column 120)
-(setq code-review-auth-login-marker 'forge)
+(use-package emacsql)
+;(use-package code-review)
+;(add-hook 'code-review-mode-hook #'emojify-mode)
+;(setq code-review-fill-column 120)
+;(setq code-review-auth-login-marker 'forge)
 
 
 (use-package w3m
@@ -515,9 +529,16 @@ use one of the alternative solutions instead:
   (setq org-roam-directory (file-truename "~/org-roam"))
   (setq find-file-visit-truename t)
   (org-roam-db-autosync-mode)
+  (require 'org-roam-export)
+  (require 'org-protocol)
+  (require 'org-roam-protocol)
+  
   :bind
   (("C-c n f" . org-roam-node-find)
    ("C-c n r" . org-roam-node-random)
+   ("C-c n l" . org-roam-buffer-toggle)
+   ("C-c n g" . org-roam-graph)
+   ("C-c n c" . org-roam-capture)
    (:map org-mode-map
          (("C-c n i" . org-roam-node-insert)
           ("C-c n o" . org-id-get-create)
@@ -529,6 +550,7 @@ use one of the alternative solutions instead:
 (use-package org-roam-bibtex)
 (use-package org-roam-ql)
 (use-package org-roam-ui)
+
 ;; emms
 (use-package emms)
 ;; w3m
@@ -541,13 +563,13 @@ use one of the alternative solutions instead:
 
 ;translate
 (use-package go-translate)
-(setq gts-translate-list '(("ja" "en") ("fr" "en") ("en" "de") ("de" "en") ("pl" "en")))
+(setq gt-translate-list '(("ja" "en") ("fr" "en") ("en" "de") ("de" "en") ("pl" "en")))
 
-(setq gts-default-translator
-      (gts-translator
-       :picker (gts-prompt-picker)
-       :engines (list (gts-bing-engine) (gts-google-engine))
-       :render (gts-buffer-render)))
+(setq gt-default-translator
+      (gt-translator
+       :taker   (gt-taker :text 'buffer :pick 'paragraph)
+       :engines (list (gt-bing-engine) (gt-google-engine))
+       :render (gt-buffer-render)))
 
 
 ;; dashboard
