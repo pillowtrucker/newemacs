@@ -534,23 +534,39 @@ use one of the alternative solutions instead:
   (require 'org-roam-protocol)
   
   :bind
-  (("C-c n f" . org-roam-node-find)
-   ("C-c n r" . org-roam-node-random)
-   ("C-c n l" . org-roam-buffer-toggle)
-   ("C-c n g" . org-roam-graph)
-   ("C-c n c" . org-roam-capture)
-   (:map org-mode-map
-         (("C-c n i" . org-roam-node-insert)
-          ("C-c n o" . org-id-get-create)
-          ("C-c n t" . org-roam-tag-add)
-          ("C-c n a" . org-roam-alias-add)
-          ("C-c n l" . org-roam-buffer-toggle))))
+  (("C-c r f" . org-roam-node-find)
+   ("C-c r i" . org-roam-node-insert)
+   ("C-c r r" . org-roam-node-random)
+   ("C-c r l" . org-roam-buffer-toggle)
+;   ("C-c r g" . org-roam-graph)
+   ("C-c r c" . org-roam-capture)
+   
+   :map org-mode-map
+         (("C-M-i" . completion-at-point)
+          ("C-c r i" . org-roam-node-insert)
+          ("C-c r o" . org-id-get-create)
+          ("C-c r t" . org-roam-tag-add)
+          ("C-c r a" . org-roam-alias-add)
+          ("[mouse-1]" . org-roam-visit-thing)
+          ("C-c r l" . org-roam-buffer-toggle)))
   )
 
 (use-package org-roam-bibtex)
 (use-package org-roam-ql)
-(use-package org-roam-ui)
-
+;(use-package org-roam-ui)
+(use-package org-roam-ui
+  :straight
+    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+    :after org-roam
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+    :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
 ;; emms
 (use-package emms)
 ;; w3m
