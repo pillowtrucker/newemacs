@@ -512,10 +512,20 @@ use one of the alternative solutions instead:
 (setq inferior-lisp-program "clasp")
 
 ;; org-mode stuff
-(use-package org-edna)
+(use-package org-edna
+  :init (org-edna-mode +1)
+  )
 (use-package org-journal)
 (use-package org-contrib)
 (use-package org-ql)
+(use-package org-transclusion
+  :after org
+  :bind
+  (("<f12>" . org-transclusion-add)
+   ("C-c r T" . org-transclusion-mode)
+   )
+  )
+
 (use-package helm-org-ql)
 ;(use-package hyperbole
 ;    :straight (:repo "rswgnu/hyperbole"
@@ -538,7 +548,7 @@ use one of the alternative solutions instead:
    ("C-c r i" . org-roam-node-insert)
    ("C-c r r" . org-roam-node-random)
    ("C-c r l" . org-roam-buffer-toggle)
-;   ("C-c r g" . org-roam-graph)
+   ("C-c r g" . org-roam-graph)
    ("C-c r c" . org-roam-capture)
    
    :map org-mode-map
@@ -550,7 +560,28 @@ use one of the alternative solutions instead:
           ("[mouse-1]" . org-roam-visit-thing)
           ("C-c r l" . org-roam-buffer-toggle)))
   )
+(use-package org-node
+  :after org
+  :config
+  (org-node-cache-mode)
+  (setq org-node-backlink-aggressive t)
+  (org-node-backlink-mode)
+  :bind
+  (("M-s M-f" . org-node-find)
+   :map org-mode-map (("M-s M-i" . org-node-insert-link))
+   )
+  )
+(use-package org-node-fakeroam
+  :after org-node
+  :init
+  (setq org-node-extra-id-dirs '("~/org-roam/"))
+  (setq org-node-creation-fn #'org-node-fakeroam-new-via-roam-capture)
+  (setq org-node-slug-fn #'org-node-fakeroam-slugify-via-roam)
+  (setq org-node-datestamp-format "%Y%m%d%H%M%S-")
+  (org-node-fakeroam-fast-render-mode)
+  (setq org-node-fakeroam-fast-render-persist t)
 
+  )
 (use-package org-roam-bibtex)
 (use-package org-roam-ql)
 ;(use-package org-roam-ui)
