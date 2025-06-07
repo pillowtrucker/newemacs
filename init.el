@@ -321,6 +321,7 @@ use one of the alternative solutions instead:
              (lua-mode . lsp-deferred)
 	     (haskell-literate-mode . lsp-deferred)
              (gluon-mode . lsp-mode)
+             (racket-mode . lsp-deferred)
 ;             (tcl-mode . lsp-deferred)
 ;	     (lsp-mode . lsp-enable-which-key-integration)
              (lsp-mode . lsp-ui-mode))
@@ -421,8 +422,24 @@ use one of the alternative solutions instead:
 (use-package gruvbox-theme)
 
 ;; xclip
-(use-package xclip)
-(xclip-mode +1)
+;; (use-package xclip)
+;; (xclip-mode +1)
+;; credit: yorickvP on Github
+(setq wl-copy-process nil)
+(defun wl-copy (text)
+  (setq wl-copy-process (make-process :name "wl-copy"
+                                      :buffer nil
+                                      :command '("wl-copy" "-f" "-n")
+                                      :connection-type 'pipe
+                                      :noquery t))
+  (process-send-string wl-copy-process text)
+  (process-send-eof wl-copy-process))
+(defun wl-paste ()
+  (if (and wl-copy-process (process-live-p wl-copy-process))
+      nil ; should return nil if we're the current paste owner
+      (shell-command-to-string "wl-paste -n | tr -d \r")))
+(setq interprogram-cut-function 'wl-copy)
+(setq interprogram-paste-function 'wl-paste)
 
 ;; hello darkness my old friend
 (use-package rustic
@@ -768,5 +785,12 @@ use one of the alternative solutions instead:
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
+
+(use-package racket-mode
+  :init
+  (require 'racket-xp)
+  (add-hook 'racket-mode-hook #'racket-xp-mode)
+  )
+
 (provide 'init)
 ;;; init.el ends here
