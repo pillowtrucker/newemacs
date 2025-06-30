@@ -13,3 +13,5 @@ ido.last
 var
 straight
 debug-adapters
+async-bytecomp.log
+eln-cache/

@@ -62,6 +62,8 @@
  '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
  '(org-fold-core-style 'overlays)
+ '(rustic-lsp-client 'lsp-mode)
+ '(rustic-lsp-setup-p t)
  '(safe-local-variable-values
    '((smie-indent-basic . 2) (eval racket-add-back-end default-directory)
      (projectile-project-run-cmd . "cargo run -j8")
