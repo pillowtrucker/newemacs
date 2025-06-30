@@ -15,3 +15,4 @@ straight
 debug-adapters
 async-bytecomp.log
 eln-cache/
+.direnv/
