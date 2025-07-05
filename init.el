@@ -23,6 +23,7 @@
 ;; SOFTWARE.
 
 ;; Author: Oleksandr Manenko
+;; Version: 1.3
 ;; URL: https://gitlab.com/unrealemacs/emacsconfig
 
 ;; This file is not part of GNU Emacs.
@@ -36,6 +37,7 @@
 ;; To do so: $ emacs -q --load init.el
 ;;(setq user-init-file (or load-file-name (buffer-file-name)))
 ;;(setq user-emacs-directory (file-name-directory user-init-file))
+; (package-initialize)
 
 (defconst om-min-emacs-version "26.1")
 (when (version< emacs-version om-min-emacs-version)
@@ -334,7 +336,11 @@ use one of the alternative solutions instead:
                    :type git)
   :init
   (setq lsp-keymap-prefix "C-c l")
-  :hook     ((c-mode   . lsp-deferred)
+  :hook     ((c-mode . lsp-deferred)
+             (c-ts-mode . lsp-deferred)
+             (c++-ts-mode . lsp-deferred)
+             (c-or-c++-ts-mode . lsp-deferred)
+             (c-or-c++-mode . lsp-deferred)
 	     (c++-mode . lsp-deferred)
 	     (haskell-mode . lsp-deferred)
              (lua-mode . lsp-deferred)
@@ -502,13 +508,13 @@ use one of the alternative solutions instead:
 (treemacs-start-on-boot)
 
 ;; https://github.com/emacs-lsp/lsp-treemacs
-;(use-package lsp-treemacs
-;    :straight (:repo "emacs-lsp/lsp-treemacs"
-;                   :host github
-;                   :type git)
-;  :commands (lsp-treemacs-errors-list
-;	     lsp-treemacs-symbols)
-;  :config   (lsp-treemacs-sync-mode +1))
+(use-package lsp-treemacs
+    :straight (:repo "emacs-lsp/lsp-treemacs"
+                   :host github
+                   :type git)
+  :commands (lsp-treemacs-errors-list
+	     lsp-treemacs-symbols)
+  :config   (lsp-treemacs-sync-mode +1))
 
 ;; https://github.com/bbatsov/projectile
 (use-package projectile
@@ -529,9 +535,27 @@ use one of the alternative solutions instead:
 ;;; C++ config
 
 (when om-activate-c++-mode-for-h-files
-  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode)))
+  (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-ts-mode)))
 (add-hook
  'c++-mode-hook
+ (lambda ()
+   (setq c-default-style "bsd"
+	 c-basic-offset  2
+	 tab-width       2)
+   (c-set-offset 'innamespace 0)
+   (highlight-doxygen-mode +1)
+   ;; https://www.emacswiki.org/emacs/ElectricPair
+;;   (electric-pair-mode +1)
+   ;; https://wikemacs.org/wiki/Subword-mode
+   (subword-mode +1)
+   (display-line-numbers-mode +1)
+   ;; Set the right margin according to my default clang-format
+   (setq-local fill-column 80)
+   (local-set-key om-kbd-clang-format-buffer #'clang-format-buffer)
+   (local-set-key om-kbd-yasnippet-complete  #'company-yasnippet)))
+
+(add-hook
+ 'c++-ts-mode-hook
  (lambda ()
    (setq c-default-style "bsd"
 	 c-basic-offset  2
@@ -584,6 +608,7 @@ use one of the alternative solutions instead:
 (use-package rust-mode
   :ensure t
   :init
+  (setq treesit-extra-load-path '("~/.emacs.d/tree-sitter-module/dist/"))
   (setq rust-mode-treesitter-derive t))
 
 ;; hello darkness my old friend
@@ -624,7 +649,8 @@ use one of the alternative solutions instead:
   (add-hook 'before-save-hook 'lsp-format-buffer nil t))
 
 ;misc
-(setq auto-mode-alist (cons '("\\.ipp$" . c++-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.ipp$" . c++-ts-mode) auto-mode-alist))
+
 (setq compilation-scroll-output t)
 
 
@@ -885,6 +911,8 @@ use one of the alternative solutions instead:
           (lambda () (add-hook 'before-save-hook 'nix-format-before-save nil 'local)))
 (add-hook 'c++-mode-hook
                     (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil 'local)))
+(add-hook 'c++-ts-mode-hook
+                    (lambda () (add-hook 'before-save-hook 'lsp-format-buffer nil 'local)))
 ;(setq lsp-nix-nil-server-path "/home/wrath/.cargo/bin/nil")
 (with-eval-after-load 'lsp-mode
   (lsp-register-client
@@ -941,5 +969,24 @@ use one of the alternative solutions instead:
   )
 (use-package slint-mode)
 
+;; Enable use of tree-sitter modes by default when available
+;(setq major-mode-remap-defaults t)
+
+(add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))                                                                          
+(add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))                                                                      
+(add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
+;(use-package treesit-auto
+;  :custom
+;  (treesit-auto-install 'prompt)
+;  :config
+;  (treesit-auto-add-to-auto-mode-alist 'all)
+;  (global-treesit-auto-mode))
+
+
 (provide 'init)
+
+;; Local Variables:
+;; coding: utf-8
+;; no-byte-compile: t
+;; End:
 ;;; init.el ends here

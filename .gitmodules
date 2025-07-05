@@ -1,3 +1,6 @@
 [submodule "lisp/emacs-lsp-scheme"]
 	path = lisp/emacs-lsp-scheme
 	url = https://codeberg.org/rgherdt/emacs-lsp-scheme
+[submodule "tree-sitter-module"]
+	path = tree-sitter-module
+	url = git@github-xactyp:casouri/tree-sitter-module.git
