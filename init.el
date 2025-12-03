@@ -344,6 +344,10 @@ use one of the alternative solutions instead:
 	     (c++-mode . lsp-deferred)
 	     (haskell-mode . lsp-deferred)
              (lua-mode . lsp-deferred)
+             (js-mode . lsp-deferred)
+             (js-ts-mode . lsp-deferred)
+             (typescript-mode . lsp-deferred)
+             (typescript-ts-mode . lsp-deferred)
 	     (haskell-literate-mode . lsp-deferred)
              (gluon-mode . lsp-mode)
              (racket-mode . lsp-deferred)
@@ -661,7 +665,7 @@ use one of the alternative solutions instead:
                '(tcl-mode . "tcl"))
 
   (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection "/home/wrath/tcl-lsp-flake/lsp/lsp.tcl")
+   (make-lsp-client :new-connection (lsp-stdio-connection "/home/wrath/lc/tcl/lsp/lsp.tcl")
                     :activation-fn (lsp-activate-on "tcl")
                     :server-id 'lsptcl)))
 
@@ -801,15 +805,15 @@ use one of the alternative solutions instead:
 (require 'helm-init)
 ;(require 'emms-config.el)
 
-;translate
-(use-package go-translate)
-(setq gt-translate-list '(("ja" "en") ("fr" "en") ("en" "de") ("de" "en") ("pl" "en")))
+;;translate
+;(use-package go-translate)
+;(setq gt-translate-list '(("ja" "en") ("fr" "en") ("en" "de") ("de" "en") ("pl" "en")))
 
-(setq gt-default-translator
-      (gt-translator
-       :taker   (gt-taker :text 'buffer :pick 'paragraph)
-       :engines (list (gt-bing-engine) (gt-google-engine))
-       :render (gt-buffer-render)))
+;(setq gt-default-translator
+;      (gt-translator
+;       :taker   (gt-taker :text 'buffer :pick 'paragraph)
+;       :engines (list (gt-bing-engine) (gt-google-engine))
+;       :render (gt-buffer-render)))
 
 
 ;; dashboard
@@ -972,7 +976,9 @@ use one of the alternative solutions instead:
 ;; Enable use of tree-sitter modes by default when available
 ;(setq major-mode-remap-defaults t)
 
-(add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))                                                                          
+(add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+;(add-to-list 'major-mode-remap-alist '(js-mode . js-ts-mode))
+;(add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
 (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))                                                                      
 (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
 ;(use-package treesit-auto
@@ -981,9 +987,88 @@ use one of the alternative solutions instead:
 ;  :config
 ;  (treesit-auto-add-to-auto-mode-alist 'all)
 ;  (global-treesit-auto-mode))
+;; for eat terminal backend:
+(use-package eat
+  :straight (:type git
+                   :host codeberg
+                   :repo "akib/emacs-eat"
+                   :files ("*.el" ("term" "term/*.el") "*.texi"
+                           "*.ti" ("terminfo/e" "terminfo/e/*")
+                           ("terminfo/65" "terminfo/65/*")
+                           ("integration" "integration/*")
+                           (:exclude ".dir-locals.el" "*-tests.el"))))
 
+;; for vterm terminal backend:
+;(use-package vterm :straight t)
 
-(provide 'init)
+;; install claude-code.el:
+(use-package claude-code
+  :straight (:type git :host github :repo "stevemolitor/claude-code.el" :branch "main"
+                   :files ("*.el" (:exclude "images/*")))
+  :bind-keymap
+  ("C-c c" . claude-code-command-map) ;; or your preferred key
+  :config
+  (claude-code-mode))
+;(setq vterm-max-scrollback 100000)
+;(setq claude-code-terminal-backend 'vterm)
+
+;(use-package claude-code-ide
+;  :straight (:type git :host github :repo "manzaltu/claude-code-ide.el"))
+;(setq claude-code-ide-window-side 'bottom
+;      claude-code-ide-window-height 30)
+;
+
+(use-package typescript-mode)
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(defun read-lines (filePath)
+  "Return a list of lines of a file at filePath."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (split-string (buffer-string) "\n" t)))
+(setenv "CODESTRAL_API_KEY" (car (read-lines "~/CODESTRAL_API_KEY")))
+(use-package minuet
+    :straight (:repo "milanglacier/minuet-ai.el"
+                   :host github
+                   :type git)
+    :bind
+    (("M-y" . #'minuet-complete-with-minibuffer) ;; use minibuffer for completion
+     ("M-i" . #'minuet-show-suggestion) ;; use overlay for completion
+     ("C-c m" . #'minuet-configure-provider)
+     :map minuet-active-mode-map
+     ;; These keymaps activate only when a minuet suggestion is displayed in the current buffer
+     ("M-p" . #'minuet-previous-suggestion) ;; invoke completion or cycle to next completion
+     ("M-n" . #'minuet-next-suggestion) ;; invoke completion or cycle to previous completion
+     ("M-A" . #'minuet-accept-suggestion) ;; accept whole completion
+     ;; Accept the first line of completion, or N lines with a numeric-prefix:
+     ;; e.g. C-u 2 M-a will accepts 2 lines of completion.
+     ("M-a" . #'minuet-accept-suggestion-line)
+     ("M-e" . #'minuet-dismiss-suggestion))
+
+    :init
+    ;; if you want to enable auto suggestion.
+    ;; Note that you can manually invoke completions without enable minuet-auto-suggestion-mode
+;    (add-hook 'prog-mode-hook #'minuet-auto-suggestion-mode)
+
+    :config
+    ;; You can use M-x minuet-configure-provider to interactively configure provider and model
+;    (setq minuet-provider 'openai-fim-compatible)
+
+    (minuet-set-optional-options minuet-openai-fim-compatible-options :max_tokens 64))
+
+    ;; For Evil users: When defining `minuet-ative-mode-map` in insert
+    ;; or normal states, the following one-liner is required.
+
+    ;; (add-hook 'minuet-active-mode-hook #'evil-normalize-keymaps)
+
+    ;; This is *not* necessary when defining `minuet-active-mode-map`.
+
+    ;; To minimize frequent overhead, it is recommended to avoid adding
+    ;; `evil-normalize-keymaps` to `minuet-active-mode-hook`. Instead,
+    ;; bind keybindings directly within `minuet-active-mode-map` using
+    ;; standard Emacs key sequences, such as `M-xxx`. This approach should
+    ;; not conflict with Evil's keybindings, as Evil primarily avoids
+    ;; using `M-xxx` bindings.
+;(provide 'init)
 
 ;; Local Variables:
 ;; coding: utf-8

@@ -30,6 +30,9 @@
         devShells.default = pkgs.mkShell {
           #          stdenv = pkgs.llvmPackages_19.stdenv;
           nativeBuildInputs = with pkgs; [
+            nixfmt-rfc-style
+            python3
+            git
             eask-cli
             slint-lsp
             fenix.packages.${system}.complete.toolchain
@@ -48,6 +51,9 @@
             llvmPackages_19.stdenv.cc.cc.lib
             zlib
             ncurses
+            #            libvterm-neovim
+            #            libvterm
+            libtool
           ];
           dontWrapQtApps = true;
           APPEND_LIBRARY_PATH = with pkgs;
@@ -63,6 +69,8 @@
               fontconfig
               zlib
               cmake
+              #              libvterm-neovim
+              #             libvterm
             ];
 
           shellHook = ''

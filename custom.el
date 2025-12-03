@@ -15,6 +15,7 @@
      default))
  '(dape-breakpoint-global-mode t)
  '(dape-buffer-window-arrangement 'gud)
+ '(eat-term-scrollback-size 50000)
  '(forge-alist
    '(("github-pillow" "api.github.com" "github.com"
       forge-github-repository)
@@ -63,6 +64,7 @@
  '(lsp-rust-analyzer-display-reborrow-hints t)
  '(lsp-rust-analyzer-macro-expansion-method 'rustic-analyzer-macro-expand)
  '(minions-prominent-modes '(lsp-ui-mode lsp-mode))
+ '(minuet-provider 'codestral)
  '(org-fold-core-style 'overlays)
  '(rustic-lsp-client 'lsp-mode)
  '(rustic-lsp-setup-p t)
