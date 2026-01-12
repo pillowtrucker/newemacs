@@ -5,6 +5,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansible-vault-password 'ignore)
+ '(ansible-vault-password-file "~/.vault_pass")
  '(company-clang-executable "clang")
  '(custom-enabled-themes '(gruvbox-dark-hard))
  '(custom-safe-themes
@@ -42,6 +44,7 @@
      ("git.suckless.org" nil "git.suckless.org"
       forge-stagit-repository)
      ("git.sr.ht" nil "git.sr.ht" forge-srht-repository)))
+ '(lsp-ansible-add-on? nil)
  '(lsp-auto-configure t)
  '(lsp-clients-clangd-args
    '("--header-insertion=iwyu" "--completion-style=detailed"

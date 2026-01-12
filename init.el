@@ -351,6 +351,7 @@ use one of the alternative solutions instead:
 	     (haskell-literate-mode . lsp-deferred)
              (gluon-mode . lsp-mode)
              (racket-mode . lsp-deferred)
+             (ansible-mode . lsp-deferred)
 ;             (rustic-mode . lsp-deferred)
 ;             (tcl-mode . lsp-deferred)
 ;	     (lsp-mode . lsp-enable-which-key-integration)
@@ -1068,6 +1069,15 @@ use one of the alternative solutions instead:
     ;; standard Emacs key sequences, such as `M-xxx`. This approach should
     ;; not conflict with Evil's keybindings, as Evil primarily avoids
     ;; using `M-xxx` bindings.
+(use-package ansible)
+;(use-package ansible-vault :ensure t
+;    :straight (:repo "freehck/ansible-vault-mode"
+;                   :host github
+;                   :type git)
+;  )
+(use-package ansible-doc)
+(add-hook 'ansible-hook 'ansible-auto-decrypt-encrypt)
+(add-hook 'yaml-mode-hook '(lambda () (ansible-mode 1)))
 ;(provide 'init)
 
 ;; Local Variables:
